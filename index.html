@@ -1,0 +1,2795 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PANCHIBURGUERS - SISTEMA PARA GESTIONAR ORDENES</title>
+    <!-- SDK DE SUPABASE PARA CONEXIÓN A BASE DE DATOS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- LIBRERÍAS HTML2CANVAS Y JSPDF PARA DESCARGAR EL TICKET EN PDF E IMAGEN -->
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #0b0f19;
+            color: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding-bottom: 90px;
+        }
+
+        /* BARRA SUPERIOR DE MARCA */
+        .top-brand-bar {
+            background: #111827;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid #1e293b;
+            flex-wrap: wrap;
+        }
+
+        .brand-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-logo-box {
+            background: #f97316;
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.4rem;
+            box-shadow: 0 0 10px rgba(249, 115, 22, 0.4);
+        }
+
+        .brand-text h1 {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+        }
+
+        .brand-text p {
+            font-size: 0.8rem;
+            color: #facc15;
+            font-weight: 600;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn-support {
+            background: rgba(56, 189, 248, 0.14);
+            color: #38bdf8;
+            border: 1px solid #38bdf8;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-support:hover {
+            background: #38bdf8;
+            color: #0b0f19;
+        }
+
+        .btn-staff-lock {
+            background: #1e293b;
+            color: #cbd5e1;
+            border: 1px solid #475569;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: none; /* Oculto en la Portada */
+        }
+
+        .btn-staff-lock.unlocked {
+            background: rgba(34, 197, 94, 0.15);
+            border-color: #22c55e;
+            color: #22c55e;
+        }
+
+        .btn-reset-orders {
+            background: #1e293b;
+            color: #f8fafc;
+            border: 1px solid #475569;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: none; /* Oculto en la Portada */
+        }
+
+        .btn-reset-orders:hover {
+            background: #ef4444;
+            border-color: #ef4444;
+            color: #ffffff;
+        }
+
+        /* BARRA DE TIPO DE PEDIDO (SOLO VISIBLE EN EL MENÚ) */
+        .order-type-bar {
+            background: #111827;
+            padding: 10px 15px;
+            display: none;
+            gap: 10px;
+            overflow-x: auto;
+            border-bottom: 1px solid #1e293b;
+        }
+
+        .type-pill {
+            background: #1e293b;
+            color: #94a3b8;
+            border: 1px solid #334155;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .type-pill.active {
+            background: #f97316;
+            color: #ffffff;
+            border-color: #f97316;
+            box-shadow: 0 0 10px rgba(249, 115, 22, 0.4);
+        }
+
+        /* NAVEGACIÓN DE SECCIONES (OCULTA EN LA PORTADA) */
+        .nav-tabs-bar {
+            background: #111827;
+            padding: 10px 15px;
+            display: none;
+            gap: 10px;
+            border-bottom: 2px solid #1f2937;
+        }
+
+        .nav-tab-btn {
+            background: #1e293b;
+            color: #cbd5e1;
+            border: 1px solid #334155;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            flex: 1;
+            text-align: center;
+        }
+
+        .nav-tab-btn.active {
+            background: #1e293b;
+            color: #f97316;
+            border-color: #f97316;
+        }
+
+        /* CATEGORÍAS HORIZONTALES */
+        .categories-scroll {
+            display: flex;
+            gap: 10px;
+            padding: 15px 0;
+            overflow-x: auto;
+        }
+
+        .cat-chip {
+            background: #f97316;
+            color: #ffffff;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        /* CONTENEDOR PRINCIPAL */
+        .container {
+            padding: 10px 15px;
+            flex: 1;
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .view-section {
+            display: none;
+        }
+
+        .view-section.active {
+            display: block;
+        }
+
+        /* PORTADA MEJORADA CON DISEÑO ACORDE A LA PÁGINA */
+        .cover-box {
+            background: radial-gradient(circle at top, #1e293b 0%, #0f172a 70%, #0b0f19 100%);
+            border: 1px solid #334155;
+            border-top: 4px solid #f97316;
+            border-radius: 20px;
+            padding: 40px 25px;
+            text-align: center;
+            margin-top: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .fes-badge {
+            display: inline-block;
+            background: rgba(249, 115, 22, 0.15);
+            color: #f97316;
+            border: 1px solid rgba(249, 115, 22, 0.4);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            letter-spacing: 0.5px;
+        }
+
+        .cover-hero-icon {
+            width: 74px;
+            height: 74px;
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.3rem;
+            margin: 0 auto 15px auto;
+            box-shadow: 0 8px 25px rgba(249, 115, 22, 0.45);
+        }
+
+        .cover-box h2 {
+            font-size: 2.2rem;
+            color: #ffffff;
+            font-weight: 900;
+            margin-bottom: 6px;
+            letter-spacing: 1px;
+        }
+
+        .cover-box h3 {
+            font-size: 1.1rem;
+            color: #facc15;
+            margin-bottom: 24px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .welcome-banner-card {
+            background: linear-gradient(135deg, rgba(249, 115, 22, 0.14) 0%, rgba(56, 189, 248, 0.08) 100%);
+            border: 1px solid rgba(249, 115, 22, 0.45);
+            border-left: 5px solid #f97316;
+            padding: 22px 24px;
+            border-radius: 16px;
+            max-width: 640px;
+            margin: 0 auto 24px auto;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+        }
+
+        .welcome-banner-card p {
+            color: #ffffff;
+            font-size: 1.18rem;
+            font-weight: 700;
+            line-height: 1.5;
+        }
+
+        .welcome-banner-card span {
+            display: block;
+            color: #94a3b8;
+            font-size: 0.86rem;
+            margin-top: 6px;
+            font-weight: 500;
+        }
+
+        .welcome-features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: 12px;
+            max-width: 640px;
+            margin: 0 auto 26px auto;
+        }
+
+        .feature-mini-card {
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 14px 12px;
+            text-align: center;
+        }
+
+        .feature-mini-card .f-icon {
+            font-size: 1.5rem;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .feature-mini-card strong {
+            display: block;
+            font-size: 0.88rem;
+            color: #f8fafc;
+            margin-bottom: 3px;
+        }
+
+        .feature-mini-card small {
+            color: #94a3b8;
+            font-size: 0.76rem;
+        }
+
+        .btn-enter-system {
+            background: linear-gradient(90deg, #f97316 0%, #ea580c 100%);
+            color: #ffffff;
+            border: none;
+            width: 100%;
+            max-width: 640px;
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            font-weight: 800;
+            cursor: pointer;
+            margin-top: 6px;
+            box-shadow: 0 0 20px rgba(249, 115, 22, 0.45);
+            transition: transform 0.15s;
+        }
+
+        .btn-enter-system:hover {
+            transform: translateY(-2px);
+        }
+
+        /* TARJETAS DE PRODUCTOS */
+        .product-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            position: relative;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .card-img-container {
+            position: relative;
+            width: 100%;
+            height: 180px;
+        }
+
+        .card-img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .price-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: #111827;
+            color: #22c55e;
+            border: 1px solid #334155;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.95rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+        }
+
+        .card-content {
+            padding: 15px;
+        }
+
+        .card-content h3 {
+            font-size: 1.15rem;
+            color: #ffffff;
+            margin-bottom: 6px;
+        }
+
+        .card-content p {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        .card-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .btn-customize {
+            background: transparent;
+            border: 1px solid #38bdf8;
+            color: #38bdf8;
+            padding: 10px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .btn-customize:hover {
+            background: rgba(56, 189, 248, 0.15);
+        }
+
+        .btn-add {
+            background: #f97316;
+            border: none;
+            color: #ffffff;
+            padding: 10px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-align: center;
+            box-shadow: 0 0 10px rgba(249, 115, 22, 0.3);
+        }
+
+        /* CARRITO / TICKET FLOTANTE */
+        .cart-bar {
+            background: #111827;
+            border-top: 2px solid #f97316;
+            padding: 15px 20px;
+            padding-right: 185px;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
+            z-index: 100;
+        }
+
+        .cart-info span {
+            display: block;
+            font-size: 0.8rem;
+            color: #94a3b8;
+        }
+
+        .cart-info strong {
+            font-size: 1.2rem;
+            color: #facc15;
+        }
+
+        .btn-checkout {
+            background: #22c55e;
+            color: #0b0f19;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(34, 197, 94, 0.4);
+        }
+
+        /* MODALES CON JERARQUÍA DE CAPAS CORREGIDA */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.82);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 16px;
+        }
+
+        #checkout-modal {
+            z-index: 1000;
+        }
+
+        #modify-modal {
+            z-index: 1250;
+        }
+
+        #ticket-modal, #pin-modal, #support-modal {
+            z-index: 1350;
+        }
+
+        .modal-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 490px;
+            padding: 22px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            max-height: 92vh;
+            overflow-y: auto;
+        }
+
+        .modal-card h3 {
+            color: #ffffff;
+            margin-bottom: 6px;
+            font-size: 1.3rem;
+        }
+
+        /* TARJETAS DE SOPORTE (CREADORES) */
+        .support-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .support-item {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-left: 4px solid #38bdf8;
+            border-radius: 10px;
+            padding: 12px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .support-item strong {
+            color: #ffffff;
+            font-size: 0.95rem;
+            display: block;
+        }
+
+        .support-item span {
+            color: #facc15;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .btn-call-creator {
+            background: rgba(34, 197, 94, 0.15);
+            border: 1px solid #22c55e;
+            color: #22c55e;
+            text-decoration: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        /* RESUMEN TIPO CARRITO EN EL MODAL DE PAGO */
+        .cart-summary-title {
+            font-size: 0.85rem;
+            color: #38bdf8;
+            font-weight: 700;
+            margin: 14px 0 8px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .cart-summary-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 190px;
+            overflow-y: auto;
+            margin-bottom: 12px;
+            padding-right: 4px;
+        }
+
+        .cart-summary-item {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            padding: 10px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cart-item-details {
+            flex: 1;
+        }
+
+        .cart-item-details strong {
+            color: #ffffff;
+            font-size: 0.92rem;
+            display: block;
+        }
+
+        .cart-item-details .item-mods {
+            color: #f97316;
+            font-size: 0.78rem;
+            margin-top: 2px;
+            display: block;
+        }
+
+        .cart-item-details .item-price {
+            color: #22c55e;
+            font-size: 0.85rem;
+            font-weight: bold;
+            margin-top: 4px;
+            display: block;
+        }
+
+        .cart-item-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .btn-cart-edit {
+            background: rgba(56, 189, 248, 0.12);
+            border: 1px solid #38bdf8;
+            color: #38bdf8;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn-cart-delete {
+            background: rgba(239, 68, 68, 0.12);
+            border: 1px solid #ef4444;
+            color: #ef4444;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* CAMPOS DE CLIENTE Y DELIVERY */
+        .form-group {
+            margin-bottom: 10px;
+        }
+
+        .form-input {
+            width: 100%;
+            background: #0f172a;
+            border: 1px solid #334155;
+            color: #f8fafc;
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            outline: none;
+        }
+
+        .form-input:focus {
+            border-color: #f97316;
+        }
+
+        .delivery-fields-box {
+            background: rgba(249, 115, 22, 0.08);
+            border: 1px dashed #f97316;
+            padding: 10px;
+            border-radius: 10px;
+            margin-top: 8px;
+            display: none;
+        }
+
+        /* CALCULADORA DE CAMBIO */
+        .cash-calculator-box {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            padding: 12px;
+            margin-top: 10px;
+        }
+
+        .quick-bills-row {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn-bill {
+            background: #1e293b;
+            border: 1px solid #475569;
+            color: #e2e8f0;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            font-weight: bold;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .btn-bill:hover {
+            border-color: #22c55e;
+            color: #22c55e;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .option-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #0f172a;
+            border: 1px solid #334155;
+            padding: 12px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+        }
+
+        .option-label input {
+            margin-right: 10px;
+            transform: scale(1.2);
+            accent-color: #f97316;
+        }
+
+        .option-extra-price {
+            color: #22c55e;
+            font-weight: bold;
+            font-size: 0.85rem;
+        }
+
+        .payment-methods {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 8px 0 12px 0;
+        }
+
+        .pay-method-btn {
+            background: #0f172a;
+            border: 1px solid #334155;
+            color: #cbd5e1;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .pay-method-btn.selected {
+            border-color: #f97316;
+            color: #f97316;
+            background: rgba(249, 115, 22, 0.1);
+        }
+
+        .modal-close {
+            background: #ef4444;
+            color: #ffffff;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        /* TICKET DIGITAL DESCARGABLE */
+        .receipt-paper {
+            background: #ffffff;
+            color: #0f172a;
+            border-radius: 12px;
+            padding: 20px;
+            font-family: 'Courier New', Courier, monospace;
+            border-top: 6px solid #f97316;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+        }
+
+        .receipt-header {
+            text-align: center;
+            border-bottom: 2px dashed #cbd5e1;
+            padding-bottom: 12px;
+            margin-bottom: 12px;
+        }
+
+        .receipt-folio {
+            display: inline-block;
+            background: #0f172a;
+            color: #facc15;
+            font-weight: 900;
+            font-size: 1.25rem;
+            padding: 4px 14px;
+            border-radius: 8px;
+            margin: 6px 0;
+        }
+
+        .receipt-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.86rem;
+            margin-bottom: 4px;
+            gap: 8px;
+        }
+
+        .receipt-total-box {
+            border-top: 2px dashed #cbd5e1;
+            margin-top: 12px;
+            padding-top: 10px;
+        }
+
+        .ticket-download-options-label {
+            text-align: center;
+            color: #facc15;
+            font-size: 0.82rem;
+            font-weight: 700;
+            margin-top: 14px;
+            margin-bottom: 6px;
+        }
+
+        .ticket-download-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .btn-download-pdf {
+            background: #ef4444;
+            color: #ffffff;
+            border: none;
+            width: 100%;
+            padding: 12px 10px;
+            border-radius: 10px;
+            font-size: 0.86rem;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 0 12px rgba(239, 68, 68, 0.35);
+        }
+
+        .btn-download-ticket {
+            background: #22c55e;
+            color: #0b0f19;
+            border: none;
+            width: 100%;
+            padding: 12px 10px;
+            border-radius: 10px;
+            font-size: 0.86rem;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 0 12px rgba(34, 197, 94, 0.35);
+        }
+
+        /* SECCIÓN DE ÓRDENES Y AGRUPACIÓN POR DÍA */
+        .orders-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #111827;
+            border: 1px solid #1e293b;
+            padding: 10px 14px;
+            border-radius: 12px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .btn-sound-toggle {
+            background: rgba(56, 189, 248, 0.12);
+            border: 1px solid #38bdf8;
+            color: #38bdf8;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn-sound-toggle.muted {
+            background: #1e293b;
+            border-color: #475569;
+            color: #94a3b8;
+        }
+
+        .day-group-header {
+            background: linear-gradient(90deg, #1e293b 0%, #0f172a 100%);
+            border: 1px solid #334155;
+            border-left: 4px solid #facc15;
+            color: #facc15;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 800;
+            margin: 14px 0 8px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .day-header-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-day-summary-ticket {
+            background: #f97316;
+            color: #ffffff;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(249, 115, 22, 0.35);
+            transition: transform 0.15s;
+        }
+
+        .btn-day-summary-ticket:hover {
+            transform: translateY(-1px);
+            background: #ea580c;
+        }
+
+        /* PANEL DE CORTE DE CAJA DESGLOSADO */
+        .cashout-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+            margin: 12px 0 20px 0;
+        }
+
+        .cashout-card {
+            background: #111827;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .cashout-card span {
+            display: block;
+            font-size: 0.78rem;
+            color: #94a3b8;
+            margin-bottom: 4px;
+        }
+
+        .cashout-card strong {
+            font-size: 1.05rem;
+            color: #f8fafc;
+        }
+
+        .cashout-card.highlight {
+            border-color: #facc15;
+            background: rgba(250, 204, 21, 0.08);
+        }
+
+        .cashout-card.highlight strong {
+            color: #facc15;
+        }
+
+        .orders-section-title {
+            color: #38bdf8;
+            margin: 15px 0 8px 0;
+            font-size: 1.2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .kds-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 10px;
+            margin-bottom: 25px;
+        }
+
+        .kds-card {
+            background: #1e293b;
+            border-left: 6px solid #eab308;
+            border-radius: 12px;
+            padding: 15px;
+            border-top: 1px solid #334155;
+            border-right: 1px solid #334155;
+            border-bottom: 1px solid #334155;
+        }
+
+        .kds-card.preparing {
+            border-left-color: #f97316;
+            background: linear-gradient(135deg, #1e293b 0%, rgba(249, 115, 22, 0.08) 100%);
+        }
+
+        .kds-card.delivered {
+            border-left-color: #38bdf8;
+            background: #111827;
+            opacity: 0.92;
+        }
+
+        .kds-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 8px;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .status-pill-badge {
+            padding: 3px 9px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 800;
+        }
+
+        .status-pill-badge.pending {
+            background: rgba(234, 179, 8, 0.15);
+            color: #facc15;
+            border: 1px solid rgba(234, 179, 8, 0.4);
+        }
+
+        .status-pill-badge.preparing {
+            background: rgba(249, 115, 22, 0.2);
+            color: #fb923c;
+            border: 1px solid #f97316;
+        }
+
+        .customer-badge {
+            background: rgba(249, 115, 22, 0.15);
+            color: #fdba74;
+            border: 1px solid rgba(249, 115, 22, 0.35);
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            margin-bottom: 8px;
+            display: inline-block;
+            font-weight: 600;
+        }
+
+        .order-cost-tag {
+            background: rgba(34, 197, 94, 0.15);
+            color: #22c55e;
+            border: 1px solid rgba(34, 197, 94, 0.4);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 800;
+        }
+
+        .modifier-subtext {
+            font-size: 0.8rem;
+            color: #f97316;
+            margin-left: 14px;
+            margin-bottom: 4px;
+        }
+
+        .kds-actions-row {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn-preparing {
+            background: #f97316;
+            color: #ffffff;
+            border: none;
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn-preparing.active-prep {
+            background: rgba(249, 115, 22, 0.2);
+            color: #fb923c;
+            border: 1px solid #f97316;
+            cursor: default;
+        }
+
+        .btn-dispatch {
+            background: #22c55e;
+            color: #0b0f19;
+            border: none;
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn-order-ticket {
+            background: #0f172a;
+            color: #38bdf8;
+            border: 1px solid #38bdf8;
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn-order-ticket:hover {
+            background: rgba(56, 189, 248, 0.12);
+        }
+
+        .empty-orders-msg {
+            background: #111827;
+            border: 1px dashed #334155;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        /* NOTIFICACIÓN FLOTANTE (TOAST) */
+        .toast-alert {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #22c55e;
+            color: #0b0f19;
+            padding: 12px 18px;
+            border-radius: 10px;
+            font-weight: 800;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+            z-index: 2000;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NOTIFICACIÓN FLOTANTE -->
+    <div id="toast-notification" class="toast-alert">🔔 ¡Nueva orden recibida en cocina!</div>
+
+    <!-- BARRA SUPERIOR DE MARCA (PERSONAL Y REINICIO OCULTOS EN PORTADA) -->
+    <header class="top-brand-bar">
+        <div class="brand-left">
+            <div class="brand-logo-box">🍔</div>
+            <div class="brand-text">
+                <h1>PANCHIBURGUERS</h1>
+                <p>FES CUAUTITLÁN · SISTEMA PARA GESTIONAR ORDENES</p>
+            </div>
+        </div>
+        <div class="header-actions">
+            <button class="btn-support" onclick="openSupportModal()">
+                🎧 Soporte
+            </button>
+            <button id="btn-staff-status" class="btn-staff-lock" onclick="toggleStaffAuth()">
+                🔒 Personal (PIN)
+            </button>
+            <button id="btn-reset-orders" class="btn-reset-orders" onclick="solicitarReinicioConPin()">
+                🔄 Reiniciar Contador y Órdenes
+            </button>
+        </div>
+    </header>
+
+    <!-- SELECTOR DE TIPO DE PEDIDO (OCULTO EN PORTADA Y ÓRDENES, VISIBLE SOLO EN MENÚ) -->
+    <div id="order-type-bar" class="order-type-bar">
+        <div class="type-pill active" onclick="setOrderType(this, 'Comer Aquí')">🍽️ Comer Aquí</div>
+        <div class="type-pill" onclick="setOrderType(this, 'Para Llevar')">🛍️ Para Llevar</div>
+        <div class="type-pill" onclick="setOrderType(this, 'Delivery')">🚴 Delivery</div>
+    </div>
+
+    <!-- PESTAÑAS DE NAVEGACIÓN (OCULTAS EN LA PORTADA) -->
+    <div id="nav-tabs-bar" class="nav-tabs-bar">
+        <button class="nav-tab-btn active" onclick="switchView('portada')" id="nav-btn-portada">🏠 Portada</button>
+        <button class="nav-tab-btn" onclick="switchView('kiosco')" id="nav-btn-kiosco">🛒 Menú</button>
+        <button class="nav-tab-btn" onclick="switchView('ordenes')" id="nav-btn-ordenes">📋 Órdenes</button>
+    </div>
+
+    <div class="container">
+
+        <!-- 1. SECCIÓN PORTADA CON DISEÑO MEJORADO -->
+        <div id="section-portada" class="view-section active">
+            <div class="cover-box">
+                <div class="fes-badge">🎓 FES CUAUTITLÁN · UNAM</div>
+                <div class="cover-hero-icon">🍔</div>
+                <h2>PANCHIBURGUERS</h2>
+                <h3>SISTEMA PARA GESTIONAR ORDENES</h3>
+
+                <div class="welcome-banner-card">
+                    <p>Bienvenido a Panchiburguers, ingresa para realizar y administrar tu pedido</p>
+                    <span>Selecciona tus ingredientes al gusto, elige tu modalidad de entrega y descarga tu comprobante digital al instante.</span>
+                </div>
+
+                <div class="welcome-features-grid">
+                    <div class="feature-mini-card">
+                        <span class="f-icon">🍔</span>
+                        <strong>Menú Personalizable</strong>
+                        <small>Modifica ingredientes y sabores a tu gusto</small>
+                    </div>
+                    <div class="feature-mini-card">
+                        <span class="f-icon">📄</span>
+                        <strong>Tickets en PDF o Imagen</strong>
+                        <small>Descarga comprobantes de orden y cortes del día</small>
+                    </div>
+                    <div class="feature-mini-card">
+                        <span class="f-icon">🔥</span>
+                        <strong>Cocina en Tiempo Real</strong>
+                        <small>Seguimiento por día y estado de preparación</small>
+                    </div>
+                </div>
+
+                <button class="btn-enter-system" onclick="switchView('kiosco')">
+                    Ingresar al Sistema →
+                </button>
+            </div>
+        </div>
+
+        <!-- 2. SECCIÓN MENÚ -->
+        <div id="section-kiosco" class="view-section">
+            
+            <!-- PESTAÑA UNIFICADA: ARMAR ORDEN -->
+            <div class="categories-scroll">
+                <div class="cat-chip">Armar orden</div>
+            </div>
+
+            <!-- LISTA DE PRODUCTOS PANCHIBURGUERS -->
+            <div id="products-list-container">
+
+                <div class="product-card">
+                    <div class="card-img-container">
+                        <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd" alt="Sencilla">
+                        <div class="price-badge">$65.00</div>
+                    </div>
+                    <div class="card-content">
+                        <h3>Hamburguesa Sencilla</h3>
+                        <p>Carne de res artesanal, queso fundido, lechuga, jitomate y aderezo especial.</p>
+                        <div class="card-actions">
+                            <button class="btn-customize" onclick="openModifyModal('Hamburguesa Sencilla', 65, 'hamburguesa')">Modificar</button>
+                            <button class="btn-add" onclick="addItem('Hamburguesa Sencilla', 65, [], 65, 'hamburguesa')">+ Agregar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <div class="card-img-container">
+                        <img src="https://images.unsplash.com/photo-1586190848861-99aa4a171e90" alt="Quesillo">
+                        <div class="price-badge">$70.00</div>
+                    </div>
+                    <div class="card-content">
+                        <h3>Hamburguesa Quesillo</h3>
+                        <p>Delicioso quesillo fundido al estilo tradicional con aderezos y verduras frescas.</p>
+                        <div class="card-actions">
+                            <button class="btn-customize" onclick="openModifyModal('Hamburguesa Quesillo', 70, 'hamburguesa')">Modificar</button>
+                            <button class="btn-add" onclick="addItem('Hamburguesa Quesillo', 70, [], 70, 'hamburguesa')">+ Agregar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <div class="card-img-container">
+                        <img src="https://images.unsplash.com/photo-1550547660-d9450f859349" alt="Especial">
+                        <div class="price-badge">$80.00</div>
+                    </div>
+                    <div class="card-content">
+                        <h3>Hamburguesa Especial</h3>
+                        <p>Tocino, quesillo, queso amarillo, jamón y aderezos de la casa.</p>
+                        <div class="card-actions">
+                            <button class="btn-customize" onclick="openModifyModal('Hamburguesa Especial', 80, 'hamburguesa')">Modificar</button>
+                            <button class="btn-add" onclick="addItem('Hamburguesa Especial', 80, [], 80, 'hamburguesa')">+ Agregar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <div class="card-img-container">
+                        <img src="https://images.unsplash.com/photo-1553979459-d2229ba7433b" alt="Mega">
+                        <div class="price-badge">$100.00</div>
+                    </div>
+                    <div class="card-content">
+                        <h3>Hamburguesa Mega ★</h3>
+                        <p>Doble carne, quesillo, tocino, queso amarillo, jamón, piña y doble salchicha.</p>
+                        <div class="card-actions">
+                            <button class="btn-customize" onclick="openModifyModal('Hamburguesa Mega ★', 100, 'hamburguesa')">Modificar</button>
+                            <button class="btn-add" onclick="addItem('Hamburguesa Mega ★', 100, [], 100, 'hamburguesa')">+ Agregar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <div class="card-img-container">
+                        <img src="https://images.unsplash.com/photo-1573080496219-bb080dd4f877" alt="Papas">
+                        <div class="price-badge">$70.00</div>
+                    </div>
+                    <div class="card-content">
+                        <h3>Papas a la Francesa</h3>
+                        <p>Crujientes papas fritas sazonadas con un toque especial.</p>
+                        <div class="card-actions">
+                            <button class="btn-customize" onclick="openModifyModal('Papas a la Francesa', 70, 'papas')">Modificar</button>
+                            <button class="btn-add" onclick="addItem('Papas a la Francesa', 70, [], 70, 'papas')">+ Agregar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- REFRESCOS MEXICANOS -->
+                <div class="product-card">
+                    <div class="card-img-container">
+                        <img src="https://images.unsplash.com/photo-1567103472667-6898f3a79cf2?auto=format&fit=crop&w=600&q=80" 
+                             onerror="this.src='https://images.unsplash.com/photo-1581636625402-29b2a704ef13?auto=format&fit=crop&w=600&q=80'" 
+                             alt="Refrescos Mexicanos">
+                        <div class="price-badge">$25.00</div>
+                    </div>
+                    <div class="card-content">
+                        <h3>Refresco 600ml</h3>
+                        <p>Variedad de refrescos mexicanos bien fríos (Jarritos, Coca-Cola, Sidral Mundet, Sprite).</p>
+                        <div class="card-actions">
+                            <button class="btn-customize" onclick="openModifyModal('Refresco 600ml', 25, 'refresco')">Modificar</button>
+                            <button class="btn-add" onclick="addItem('Refresco 600ml', 25, [], 25, 'refresco')">+ Agregar</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- 3. SECCIÓN ÓRDENES (PROTEGIDA CON PIN 2684 Y DIVIDIDA POR DÍA) -->
+        <div id="section-ordenes" class="view-section">
+            
+            <!-- BARRA DE CONTROL KDS (SONIDO Y SINCRONIZACIÓN) -->
+            <div class="orders-toolbar">
+                <span style="font-size: 0.82rem; color: #94a3b8;">🔄 Sincronización automática activa (cada 5s)</span>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <button id="btn-sound-kds" class="btn-sound-toggle" onclick="toggleKdsSound()">🔔 Sonido: Activado</button>
+                    <button class="btn-sound-toggle" onclick="playKitchenBell()">🔊 Probar Campana</button>
+                </div>
+            </div>
+
+            <div class="orders-section-title">
+                <span>🔥 Órdenes Activas (Pendientes y En Preparación)</span>
+            </div>
+            <p style="color: #94a3b8; font-size: 0.85rem; margin-bottom: 10px;">
+                Divididas por día. Presiona <strong>"En Preparación"</strong> al comenzar a cocinar y <strong>"Entregar Orden"</strong> al entregar al cliente.
+            </p>
+
+            <div class="kds-grid" id="pending-orders-container">
+                <div class="empty-orders-msg">No hay órdenes pendientes en este momento.</div>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid #1e293b; margin: 25px 0;">
+
+            <!-- CORTE DE CAJA DESGLOSADO POR MÉTODO DE PAGO CON BOTÓN DE RESUMEN GENERAL -->
+            <div class="orders-section-title">
+                <span style="color: #facc15;">📊 Corte de Caja y Resumen de Ventas</span>
+                <button class="btn-day-summary-ticket" onclick="abrirTicketResumenGeneral()">
+                    🧾 Descargar Ticket Resumen General
+                </button>
+            </div>
+            <div class="cashout-grid">
+                <div class="cashout-card">
+                    <span>💵 Efectivo en Caja</span>
+                    <strong id="cashout-efectivo">$0.00</strong>
+                </div>
+                <div class="cashout-card">
+                    <span>💳 Tarjeta</span>
+                    <strong id="cashout-tarjeta">$0.00</strong>
+                </div>
+                <div class="cashout-card">
+                    <span>📱 Transfer QR</span>
+                    <strong id="cashout-qr">$0.00</strong>
+                </div>
+                <div class="cashout-card">
+                    <span>🎫 Cortesías</span>
+                    <strong id="cashout-cortesia">$0.00</strong>
+                </div>
+                <div class="cashout-card highlight">
+                    <span>💰 Total Vendido</span>
+                    <strong id="delivered-total-revenue">$0.00 MXN</strong>
+                </div>
+            </div>
+
+            <div class="orders-section-title">
+                <span style="color: #22c55e;">✅ Historial de Órdenes Entregadas (Por Día)</span>
+            </div>
+            <p style="color: #94a3b8; font-size: 0.85rem; margin-bottom: 10px;">
+                Cada separador de fecha cuenta con su botón para visualizar y descargar el <strong>Ticket Resumen del Día</strong> en Imagen o PDF.
+            </p>
+
+            <div class="kds-grid" id="delivered-orders-container">
+                <div class="empty-orders-msg">Aún no se han entregado órdenes.</div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- TICKET FLOTANTE DE PAGO -->
+    <div class="cart-bar" id="cart-footer-bar" style="display: none;">
+        <div class="cart-info">
+            <span id="cart-count-items">0 ítems agregados</span>
+            <strong id="cart-total-amount">$0.00 MXN</strong>
+        </div>
+        <button class="btn-checkout" onclick="openCheckoutModal()">Pagar Orden</button>
+    </div>
+
+    <!-- MODAL DE SOPORTE (CONTACTO DE LOS 4 CREADORES) -->
+    <div class="modal-overlay" id="support-modal">
+        <div class="modal-card" style="max-width: 440px;">
+            <h3>🎧 Soporte Técnico del Sistema</h3>
+            <p style="color: #94a3b8; font-size: 0.85rem;">Contacto directo con los creadores del sistema PANCHIBURGUERS:</p>
+
+            <div class="support-list">
+                <div class="support-item">
+                    <div>
+                        <strong>👤 Francisco Luna</strong>
+                        <span>📞 Tel: 56 4523 6536</span>
+                    </div>
+                    <a class="btn-call-creator" href="tel:5645236536">Llamar</a>
+                </div>
+                <div class="support-item">
+                    <div>
+                        <strong>👤 Angel Arvizu</strong>
+                        <span>📞 Tel: 56 1516 1327</span>
+                    </div>
+                    <a class="btn-call-creator" href="tel:5615161327">Llamar</a>
+                </div>
+                <div class="support-item">
+                    <div>
+                        <strong>👤 Horus Morales</strong>
+                        <span>📞 Tel: 56 4568 6496</span>
+                    </div>
+                    <a class="btn-call-creator" href="tel:5645686496">Llamar</a>
+                </div>
+                <div class="support-item">
+                    <div>
+                        <strong>👤 Andrés Zavala</strong>
+                        <span>📞 Tel: 55 4104 1025</span>
+                    </div>
+                    <a class="btn-call-creator" href="tel:5541041025">Llamar</a>
+                </div>
+            </div>
+
+            <button class="modal-close" onclick="closeSupportModal()">Cerrar Ventana</button>
+        </div>
+    </div>
+
+    <!-- MODAL DE PAGO CON CARRITO, NOMBRE OBLIGATORIO Y CALCULADORA DE CAMBIO -->
+    <div class="modal-overlay" id="checkout-modal">
+        <div class="modal-card">
+            <h3>Resumen y Pago de Orden</h3>
+            <p style="color: #94a3b8; font-size: 0.85rem;">Revisa tus productos, modifícalos o elimínalos antes de pagar:</p>
+
+            <!-- 1. LISTA INTERACTIVA DE PRODUCTOS EN EL CARRITO -->
+            <div class="cart-summary-title">🛒 Productos en tu carrito</div>
+            <div id="checkout-cart-list" class="cart-summary-list"></div>
+
+            <!-- 2. DATOS DEL CLIENTE (NOMBRE OBLIGATORIO) Y ENTREGA (DELIVERY) -->
+            <div class="cart-summary-title">👤 Datos del Cliente (Obligatorio *)</div>
+            <div class="form-group">
+                <input type="text" id="input-customer-name" class="form-input" placeholder="* Nombre para la orden (Obligatorio)" required>
+            </div>
+            <div id="delivery-extra-fields" class="delivery-fields-box">
+                <div style="font-size: 0.8rem; color: #f97316; font-weight: bold; margin-bottom: 6px;">🚴 Datos obligatorios para Delivery:</div>
+                <div class="form-group">
+                    <input type="text" id="input-delivery-location" class="form-input" placeholder="📍 Ubicación de entrega">
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                    <input type="tel" id="input-delivery-phone" class="form-input" placeholder="📞 Teléfono / WhatsApp de contacto">
+                </div>
+            </div>
+
+            <!-- 3. MÉTODO DE PAGO -->
+            <div class="cart-summary-title">💳 Método de Pago</div>
+            <div class="payment-methods">
+                <button class="pay-method-btn selected" onclick="selectPayMethod(this, 'Efectivo')">💵 Efectivo</button>
+                <button class="pay-method-btn" onclick="selectPayMethod(this, 'Tarjeta')">💳 Tarjeta</button>
+                <button class="pay-method-btn" onclick="selectPayMethod(this, 'Transfer QR')">📱 Transfer QR</button>
+                <button class="pay-method-btn" onclick="selectPayMethod(this, 'Cortesía')">🎫 Cortesía</button>
+            </div>
+
+            <!-- 4. CALCULADORA DE CAMBIO (SOLO PARA EFECTIVO) -->
+            <div id="cash-calculator-section" class="cash-calculator-box">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <span style="font-size: 0.82rem; color: #cbd5e1;">💵 ¿Con cuánto paga el cliente?</span>
+                    <strong id="cash-change-display" style="font-size: 0.9rem; color: #22c55e;">Cambio: $0.00 MXN</strong>
+                </div>
+                <input type="number" id="input-cash-received" class="form-input" placeholder="Monto recibido en efectivo ($)" oninput="calculateCashChange()">
+                <div class="quick-bills-row">
+                    <button type="button" class="btn-bill" onclick="setQuickBill('exact')">Pago Exacto</button>
+                    <button type="button" class="btn-bill" onclick="setQuickBill(100)">$100</button>
+                    <button type="button" class="btn-bill" onclick="setQuickBill(200)">$200</button>
+                    <button type="button" class="btn-bill" onclick="setQuickBill(500)">$500</button>
+                </div>
+            </div>
+
+            <div style="background: #0f172a; padding: 12px; border-radius: 8px; margin: 14px 0; display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 0.9rem; color: #94a3b8;">Total a Pagar:</span>
+                <strong id="modal-final-total" style="font-size: 1.3rem; color: #22c55e;">$0.00 MXN</strong>
+            </div>
+
+            <button class="btn-enter-system" style="margin-top: 5px;" onclick="processPayment()">Confirmar y Generar Ticket</button>
+            <button class="modal-close" onclick="closeCheckoutModal()">Seguir Comprando / Cerrar</button>
+        </div>
+    </div>
+
+    <!-- MODAL PARA MODIFICAR INGREDIENTES / SABORES (ENCIMA DEL CARRITO CON Z-INDEX 1250) -->
+    <div class="modal-overlay" id="modify-modal">
+        <div class="modal-card">
+            <h3 id="modify-modal-title">Modificar Producto</h3>
+            <p style="color: #94a3b8; font-size: 0.85rem;">Selecciona las modificaciones para tu producto:</p>
+
+            <div id="modify-options-container" class="options-list"></div>
+
+            <div style="background: #0f172a; padding: 12px; border-radius: 8px; margin: 15px 0; display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 0.85rem; color: #94a3b8;">Precio con modificaciones:</span>
+                <strong id="modify-modal-price" style="font-size: 1.15rem; color: #22c55e;">$0.00 MXN</strong>
+            </div>
+
+            <button class="btn-enter-system" id="btn-confirm-modify" style="margin-top: 5px;" onclick="confirmModifyItem()">Agregar a la Orden</button>
+            <button class="modal-close" onclick="closeModifyModal()">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- MODAL DE TICKET DIGITAL (ORDEN INDIVIDUAL O RESUMEN DEL DÍA) SIN DESCARGA AUTOMÁTICA -->
+    <div class="modal-overlay" id="ticket-modal">
+        <div class="modal-card" style="max-width: 430px;">
+            <div id="digital-receipt-content" class="receipt-paper">
+                <!-- Se llena al generar ticket de orden o resumen del día -->
+            </div>
+
+            <div class="ticket-download-options-label">
+                👇 Selecciona en qué formato deseas descargar el ticket:
+            </div>
+            <div class="ticket-download-grid">
+                <button class="btn-download-pdf" onclick="descargarTicketComoPDF()">
+                    📄 Descargar PDF
+                </button>
+                <button class="btn-download-ticket" onclick="descargarTicketComoImagen()">
+                    🖼️ Descargar IMG
+                </button>
+            </div>
+
+            <button id="btn-ticket-go-orders" class="btn-enter-system" style="margin-top: 10px;" onclick="closeTicketModal('ordenes')">
+                📋 Ir a Pantalla de Órdenes (PIN)
+            </button>
+            <button class="modal-close" style="background: #334155;" onclick="closeTicketModal(null)">
+                ✖️ Cerrar Vista Previa
+            </button>
+        </div>
+    </div>
+
+    <!-- MODAL DE PIN DE SEGURIDAD PARA PERSONAL (PIN: 2684) -->
+    <div class="modal-overlay" id="pin-modal">
+        <div class="modal-card" style="max-width: 360px; text-align: center;">
+            <h3>🔒 Acceso de Personal</h3>
+            <p style="color: #94a3b8; font-size: 0.85rem; margin-bottom: 15px;">
+                Ingresa el PIN de 4 dígitos para acceder al apartado de Órdenes o administrar el sistema.
+            </p>
+            <input type="password" id="input-staff-pin" class="form-input" maxlength="4" placeholder="••••" style="text-align: center; font-size: 1.5rem; letter-spacing: 8px; margin-bottom: 12px;">
+            <button class="btn-enter-system" style="margin-top: 5px;" onclick="confirmStaffPin()">Desbloquear y Entrar</button>
+            <button class="modal-close" onclick="closePinModal()">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- SCRIPTS DE INTERACCIÓN Y CONEXIÓN A BASE DE DATOS (SUPABASE) -->
+    <script>
+        // =========================================================================
+        // CONFIGURACIÓN DE BASE DE DATOS (SUPABASE)
+        // =========================================================================
+        const SUPABASE_URL = 'https://lekrasmqretiahurxjjp.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_fEKyY98TG4FKzjIL92ck0g_OgXzFEl5';
+
+        const supabaseConfigured = SUPABASE_URL.startsWith('http');
+        const supabaseClient = supabaseConfigured 
+            ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) 
+            : null;
+
+        let cartItems = [];
+        let cartTotal = 0;
+        let currentOrderType = 'Comer Aquí';
+        let currentPayMethod = 'Efectivo';
+
+        // CONTADOR DE ORDEN INICIANDO EN 1
+        let localOrderNum = 1;
+        let pendingOrders = [];
+        let deliveredOrders = [];
+        let currentTicketFilename = 'Ticket_Panchiburguers';
+
+        // Control de sonido KDS y detección de nuevas órdenes
+        let kdsSoundEnabled = true;
+        let knownPendingOrderIds = new Set();
+        let initialLoadComplete = false;
+
+        // PIN DE SEGURIDAD (2684)
+        const STAFF_PIN = '2684';
+        let isStaffAuthorized = false;
+        let pendingPinCallback = null;
+
+        // Producto temporal para el modal de "Modificar" y edición desde carrito
+        let currentModifyingProduct = null;
+        let editingCartIndex = null;
+
+        // Catálogo de opciones de modificación por tipo de producto
+        const MODIFICATION_OPTIONS = {
+            hamburguesa: [
+                { label: 'Sin jitomate', price: 0 },
+                { label: 'Sin cebolla', price: 0 },
+                { label: 'Sin lechuga', price: 0 },
+                { label: 'Con chiles jalapeños', price: 0 },
+                { label: 'Extra queso fundido', price: 10 },
+                { label: 'Extra tocino crujiente', price: 15 },
+                { label: 'Extra carne', price: 25 }
+            ],
+            papas: [
+                { label: 'Con cátsup y salsa picante', price: 0 },
+                { label: 'Sin sal', price: 0 },
+                { label: 'Con queso amarillo derretido', price: 15 },
+                { label: 'Con trocitos de tocino', price: 15 }
+            ],
+            refresco: [
+                { label: 'Sabor: Jarritos Mandarina', price: 0 },
+                { label: 'Sabor: Jarritos Tamarindo', price: 0 },
+                { label: 'Sabor: Jarritos Piña', price: 0 },
+                { label: 'Sabor: Coca-Cola Original', price: 0 },
+                { label: 'Sabor: Sidral Mundet', price: 0 },
+                { label: 'Sabor: Sprite Limón', price: 0 }
+            ]
+        };
+
+        // =========================================================================
+        // MODAL DE SOPORTE
+        // =========================================================================
+        function openSupportModal() {
+            document.getElementById('support-modal').style.display = 'flex';
+        }
+
+        function closeSupportModal() {
+            document.getElementById('support-modal').style.display = 'none';
+        }
+
+        // =========================================================================
+        // SONIDO DE CAMPANA DE COCINA
+        // =========================================================================
+        function playKitchenBell() {
+            if (!kdsSoundEnabled) return;
+            try {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                const ctx = new AudioCtx();
+
+                const osc1 = ctx.createOscillator();
+                const gain1 = ctx.createGain();
+                osc1.type = 'sine';
+                osc1.frequency.setValueAtTime(880, ctx.currentTime);
+                gain1.gain.setValueAtTime(0.25, ctx.currentTime);
+                gain1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.45);
+                osc1.connect(gain1);
+                gain1.connect(ctx.destination);
+                osc1.start(ctx.currentTime);
+                osc1.stop(ctx.currentTime + 0.45);
+
+                const osc2 = ctx.createOscillator();
+                const gain2 = ctx.createGain();
+                osc2.type = 'sine';
+                osc2.frequency.setValueAtTime(659.25, ctx.currentTime + 0.22);
+                gain2.gain.setValueAtTime(0.25, ctx.currentTime + 0.22);
+                gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.9);
+                osc2.connect(gain2);
+                gain2.connect(ctx.destination);
+                osc2.start(ctx.currentTime + 0.22);
+                osc2.stop(ctx.currentTime + 0.9);
+            } catch (e) {
+                console.log('Audio pendiente de interacción:', e);
+            }
+        }
+
+        function toggleKdsSound() {
+            kdsSoundEnabled = !kdsSoundEnabled;
+            const btn = document.getElementById('btn-sound-kds');
+            if (kdsSoundEnabled) {
+                btn.innerText = '🔔 Sonido: Activado';
+                btn.classList.remove('muted');
+                playKitchenBell();
+            } else {
+                btn.innerText = '🔕 Sonido: Silenciado';
+                btn.classList.add('muted');
+            }
+        }
+
+        function showToastNotification(text) {
+            const toast = document.getElementById('toast-notification');
+            toast.innerText = text;
+            toast.style.display = 'block';
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3500);
+        }
+
+        // =========================================================================
+        // SISTEMA DE SEGURIDAD CON PIN (2684) AL ENTRAR A ÓRDENES O REINICIAR
+        // =========================================================================
+        function requireStaffPin(actionCallback) {
+            if (isStaffAuthorized) {
+                actionCallback();
+                return;
+            }
+            pendingPinCallback = actionCallback;
+            document.getElementById('input-staff-pin').value = '';
+            document.getElementById('pin-modal').style.display = 'flex';
+            document.getElementById('input-staff-pin').focus();
+        }
+
+        function confirmStaffPin() {
+            const entered = document.getElementById('input-staff-pin').value.trim();
+            if (entered === STAFF_PIN) {
+                isStaffAuthorized = true;
+                updateStaffLockUI();
+                const callback = pendingPinCallback;
+                closePinModal();
+                if (callback) callback();
+            } else {
+                alert('❌ PIN incorrecto. Verifica tu clave de acceso.');
+            }
+        }
+
+        function closePinModal() {
+            document.getElementById('pin-modal').style.display = 'none';
+            pendingPinCallback = null;
+        }
+
+        function toggleStaffAuth() {
+            if (isStaffAuthorized) {
+                isStaffAuthorized = false;
+                updateStaffLockUI();
+                if (document.getElementById('section-ordenes').classList.contains('active')) {
+                    activarVistaInterna('portada');
+                }
+                showToastNotification('🔒 Sesión de personal bloqueada');
+            } else {
+                requireStaffPin(() => {
+                    showToastNotification('🔓 Acceso de personal desbloqueado');
+                });
+            }
+        }
+
+        function updateStaffLockUI() {
+            const btn = document.getElementById('btn-staff-status');
+            if (isStaffAuthorized) {
+                btn.innerText = '🔓 Personal Activo (Bloquear)';
+                btn.classList.add('unlocked');
+            } else {
+                btn.innerText = '🔒 Personal (PIN)';
+                btn.classList.remove('unlocked');
+            }
+        }
+
+        function solicitarReinicioConPin() {
+            requireStaffPin(async () => {
+                if (confirm('¿Deseas reiniciar el contador de órdenes a #1 y limpiar el historial de órdenes?')) {
+                    localOrderNum = 1;
+                    pendingOrders = [];
+                    deliveredOrders = [];
+                    knownPendingOrderIds.clear();
+
+                    if (supabaseClient) {
+                        try {
+                            await supabaseClient.from('ordenes').delete().neq('id', 0);
+                        } catch (err) {
+                            console.error('Error al limpiar Supabase:', err);
+                        }
+                    }
+
+                    renderOrdersSection();
+                    showToastNotification('🔄 Contador y órdenes reiniciados');
+                }
+            });
+        }
+
+        // =========================================================================
+        // NAVEGACIÓN (OCULTA PERSONAL, REINICIAR, MENÚ Y ÓRDENES EN LA PORTADA)
+        // =========================================================================
+        function switchView(viewId) {
+            if (viewId === 'ordenes') {
+                requireStaffPin(() => {
+                    activarVistaInterna('ordenes');
+                });
+                return;
+            }
+            activarVistaInterna(viewId);
+        }
+
+        function activarVistaInterna(viewId) {
+            document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-tab-btn').forEach(b => b.classList.remove('active'));
+
+            document.getElementById('section-' + viewId).classList.add('active');
+            document.getElementById('nav-btn-' + viewId).classList.add('active');
+
+            // Ocultar la barra de navegación (Portada / Menú / Órdenes) cuando estás en la Portada
+            const navTabsBar = document.getElementById('nav-tabs-bar');
+            if (navTabsBar) {
+                navTabsBar.style.display = (viewId === 'portada') ? 'none' : 'flex';
+            }
+
+            // Ocultar también los botones de Personal (PIN) y Reiniciar Contador en la Portada
+            const staffBtn = document.getElementById('btn-staff-status');
+            const resetBtn = document.getElementById('btn-reset-orders');
+            if (staffBtn) {
+                staffBtn.style.display = (viewId === 'portada') ? 'none' : 'inline-block';
+            }
+            if (resetBtn) {
+                resetBtn.style.display = (viewId === 'portada') ? 'none' : 'inline-block';
+            }
+
+            // Mostrar la barra de Comer Aquí / Para Llevar / Delivery SOLO en el Menú
+            const orderTypeBar = document.getElementById('order-type-bar');
+            if (orderTypeBar) {
+                orderTypeBar.style.display = (viewId === 'kiosco') ? 'flex' : 'none';
+            }
+
+            // Actualizar visibilidad de la barra flotante del carrito
+            updateCartUI();
+
+            if (viewId === 'ordenes') {
+                if (supabaseClient) {
+                    cargarOrdenesDesdeBD();
+                } else {
+                    renderOrdersSection();
+                }
+            }
+        }
+
+        function setOrderType(element, typeName) {
+            document.querySelectorAll('.type-pill').forEach(p => p.classList.remove('active'));
+            element.classList.add('active');
+            currentOrderType = typeName;
+            updateDeliveryFieldsVisibility();
+        }
+
+        function updateDeliveryFieldsVisibility() {
+            const deliveryBox = document.getElementById('delivery-extra-fields');
+            if (!deliveryBox) return;
+            deliveryBox.style.display = currentOrderType === 'Delivery' ? 'block' : 'none';
+        }
+
+        // =========================================================================
+        // MODAL DE MODIFICAR PRODUCTO (FUNCIONA EN MENÚ Y ENCIMA DEL CARRITO)
+        // =========================================================================
+        function openModifyModal(name, basePrice, type, cartIndex = null) {
+            editingCartIndex = cartIndex;
+            currentModifyingProduct = { name, basePrice, type };
+            document.getElementById('modify-modal-title').innerText = `Modificar: ${name}`;
+            
+            const confirmBtn = document.getElementById('btn-confirm-modify');
+            confirmBtn.innerText = cartIndex !== null ? 'Guardar Cambios en Carrito' : 'Agregar a la Orden';
+
+            const existingModifiers = cartIndex !== null ? (cartItems[cartIndex].modifiers || []) : [];
+
+            const container = document.getElementById('modify-options-container');
+            container.innerHTML = '';
+
+            const options = MODIFICATION_OPTIONS[type] || [];
+            const inputType = type === 'refresco' ? 'radio' : 'checkbox';
+
+            options.forEach((opt, idx) => {
+                const extraText = opt.price > 0 ? `+$${opt.price.toFixed(2)}` : 'Incluido';
+                let isChecked = false;
+
+                if (cartIndex !== null) {
+                    isChecked = existingModifiers.includes(opt.label);
+                } else if (type === 'refresco' && idx === 0) {
+                    isChecked = true;
+                }
+                
+                const label = document.createElement('label');
+                label.className = 'option-label';
+                label.innerHTML = `
+                    <div>
+                        <input type="${inputType}" name="mod-option" value="${opt.label}" data-price="${opt.price}" ${isChecked ? 'checked' : ''} onchange="updateModifyModalPrice()">
+                        <span>${opt.label}</span>
+                    </div>
+                    <span class="option-extra-price">${extraText}</span>
+                `;
+                container.appendChild(label);
+            });
+
+            updateModifyModalPrice();
+            document.getElementById('modify-modal').style.display = 'flex';
+        }
+
+        function updateModifyModalPrice() {
+            if (!currentModifyingProduct) return;
+            let extra = 0;
+            document.querySelectorAll('#modify-options-container input:checked').forEach(input => {
+                extra += parseFloat(input.getAttribute('data-price') || 0);
+            });
+            const finalPrice = currentModifyingProduct.basePrice + extra;
+            document.getElementById('modify-modal-price').innerText = `$${finalPrice.toFixed(2)} MXN`;
+        }
+
+        function closeModifyModal() {
+            document.getElementById('modify-modal').style.display = 'none';
+            currentModifyingProduct = null;
+            editingCartIndex = null;
+        }
+
+        function confirmModifyItem() {
+            if (!currentModifyingProduct) return;
+            const selectedMods = [];
+            let extra = 0;
+
+            document.querySelectorAll('#modify-options-container input:checked').forEach(input => {
+                selectedMods.push(input.value);
+                extra += parseFloat(input.getAttribute('data-price') || 0);
+            });
+
+            const finalPrice = currentModifyingProduct.basePrice + extra;
+
+            if (editingCartIndex !== null) {
+                cartItems[editingCartIndex].price = finalPrice;
+                cartItems[editingCartIndex].modifiers = selectedMods;
+                recalculateCartTotal();
+                renderCheckoutCartList();
+                showToastNotification('✏️ Producto actualizado en tu carrito');
+            } else {
+                addItem(
+                    currentModifyingProduct.name,
+                    finalPrice,
+                    selectedMods,
+                    currentModifyingProduct.basePrice,
+                    currentModifyingProduct.type
+                );
+            }
+
+            closeModifyModal();
+        }
+
+        // =========================================================================
+        // CARRITO Y CALCULADORA DE CAMBIO
+        // =========================================================================
+        function addItem(name, price, modifiers = [], basePrice = price, type = 'hamburguesa') {
+            cartItems.push({ name, price, modifiers, basePrice, type });
+            recalculateCartTotal();
+        }
+
+        function recalculateCartTotal() {
+            cartTotal = cartItems.reduce((acc, item) => acc + Number(item.price), 0);
+            updateCartUI();
+            calculateCashChange();
+        }
+
+        function updateCartUI() {
+            const footerBar = document.getElementById('cart-footer-bar');
+            const isKioscoActive = document.getElementById('section-kiosco').classList.contains('active');
+            if (cartItems.length > 0 && isKioscoActive) {
+                footerBar.style.display = 'flex';
+                document.getElementById('cart-count-items').innerText = `${cartItems.length} ítem(s) en orden`;
+                document.getElementById('cart-total-amount').innerText = `$${cartTotal.toFixed(2)} MXN`;
+            } else {
+                footerBar.style.display = 'none';
+            }
+        }
+
+        function renderCheckoutCartList() {
+            const listContainer = document.getElementById('checkout-cart-list');
+            const finalTotalEl = document.getElementById('modal-final-total');
+
+            if (cartItems.length === 0) {
+                closeCheckoutModal();
+                return;
+            }
+
+            listContainer.innerHTML = cartItems.map((item, idx) => {
+                const modsText = item.modifiers && item.modifiers.length > 0
+                    ? `↳ ${item.modifiers.join(', ')}`
+                    : 'Sin modificaciones';
+
+                return `
+                    <div class="cart-summary-item">
+                        <div class="cart-item-details">
+                            <strong>1x ${item.name}</strong>
+                            <span class="item-mods">${modsText}</span>
+                            <span class="item-price">$${Number(item.price).toFixed(2)} MXN</span>
+                        </div>
+                        <div class="cart-item-actions">
+                            <button type="button" class="btn-cart-edit" onclick="editCartItem(${idx})">✏️ Modificar</button>
+                            <button type="button" class="btn-cart-delete" onclick="removeCartItem(${idx})">🗑️ Eliminar</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            finalTotalEl.innerText = `$${cartTotal.toFixed(2)} MXN`;
+            calculateCashChange();
+        }
+
+        function editCartItem(index) {
+            const item = cartItems[index];
+            if (!item) return;
+            openModifyModal(item.name, item.basePrice || item.price, item.type || 'hamburguesa', index);
+        }
+
+        function removeCartItem(index) {
+            cartItems.splice(index, 1);
+            recalculateCartTotal();
+            renderCheckoutCartList();
+        }
+
+        function openCheckoutModal() {
+            renderCheckoutCartList();
+            updateDeliveryFieldsVisibility();
+            document.getElementById('input-cash-received').value = cartTotal.toFixed(2);
+            calculateCashChange();
+            document.getElementById('checkout-modal').style.display = 'flex';
+        }
+
+        function closeCheckoutModal() {
+            document.getElementById('checkout-modal').style.display = 'none';
+        }
+
+        function selectPayMethod(btn, method) {
+            document.querySelectorAll('.pay-method-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            currentPayMethod = method;
+
+            const cashBox = document.getElementById('cash-calculator-section');
+            cashBox.style.display = method === 'Efectivo' ? 'block' : 'none';
+        }
+
+        function setQuickBill(amount) {
+            const input = document.getElementById('input-cash-received');
+            input.value = amount === 'exact' ? cartTotal.toFixed(2) : amount;
+            calculateCashChange();
+        }
+
+        function calculateCashChange() {
+            const inputEl = document.getElementById('input-cash-received');
+            const displayEl = document.getElementById('cash-change-display');
+            if (!inputEl || !displayEl) return;
+
+            const received = parseFloat(inputEl.value);
+            if (isNaN(received) || received === 0) {
+                displayEl.innerText = 'Cambio: $0.00 MXN';
+                displayEl.style.color = '#94a3b8';
+                return;
+            }
+
+            const change = received - cartTotal;
+            if (change < 0) {
+                displayEl.innerText = `Faltan: $${Math.abs(change).toFixed(2)} MXN`;
+                displayEl.style.color = '#ef4444';
+            } else {
+                displayEl.innerText = `Cambio: $${change.toFixed(2)} MXN`;
+                displayEl.style.color = '#22c55e';
+            }
+        }
+
+        // =========================================================================
+        // PROCESAR PAGO, GUARDAR EN SUPABASE Y MOSTRAR TICKET DIGITAL
+        // =========================================================================
+        async function processPayment() {
+            if (cartItems.length === 0) {
+                alert('El carrito está vacío.');
+                return;
+            }
+
+            const nameInput = document.getElementById('input-customer-name');
+            const customerName = nameInput.value.trim();
+
+            if (!customerName) {
+                alert('⚠️ El nombre para la orden es obligatorio. Por favor escríbelo antes de continuar.');
+                nameInput.focus();
+                return;
+            }
+
+            const deliveryLoc = document.getElementById('input-delivery-location').value.trim();
+            const deliveryPhone = document.getElementById('input-delivery-phone').value.trim();
+
+            if (currentOrderType === 'Delivery' && (!deliveryLoc || !deliveryPhone)) {
+                alert('⚠️ Para pedidos de Delivery, por favor ingresa la ubicación de entrega y un teléfono de contacto.');
+                return;
+            }
+
+            let cashReceived = cartTotal;
+            let cashChange = 0;
+
+            if (currentPayMethod === 'Efectivo') {
+                const enteredCash = parseFloat(document.getElementById('input-cash-received').value);
+                if (!isNaN(enteredCash) && enteredCash < cartTotal) {
+                    alert('⚠️ El monto recibido en efectivo es menor al total a pagar.');
+                    return;
+                }
+                cashReceived = !isNaN(enteredCash) && enteredCash > 0 ? enteredCash : cartTotal;
+                cashChange = cashReceived - cartTotal;
+            }
+
+            let orderTypeWithMeta = `${currentOrderType} | 👤 ${customerName}`;
+            if (currentOrderType === 'Delivery') {
+                orderTypeWithMeta += ` | 📍 ${deliveryLoc} (📞 ${deliveryPhone})`;
+            }
+
+            const start = performance.now();
+            let orderId = localOrderNum++;
+
+            const nuevaOrden = {
+                id: orderId,
+                tipo_orden: orderTypeWithMeta,
+                metodo_pago: currentPayMethod,
+                productos: [...cartItems],
+                total: cartTotal,
+                estado: 'Pendiente',
+                created_at: new Date().toISOString()
+            };
+
+            if (supabaseClient) {
+                try {
+                    const { data, error } = await supabaseClient
+                        .from('ordenes')
+                        .insert([{
+                            tipo_orden: nuevaOrden.tipo_orden,
+                            metodo_pago: nuevaOrden.metodo_pago,
+                            productos: nuevaOrden.productos,
+                            total: nuevaOrden.total,
+                            estado: 'Pendiente'
+                        }])
+                        .select();
+
+                    if (error) {
+                        console.error('Error al guardar en Supabase:', error);
+                        alert('Error al guardar en la base de datos: ' + error.message);
+                        return;
+                    }
+                    if (data && data.length > 0) {
+                        if (data[0].id) nuevaOrden.id = data[0].id;
+                        if (data[0].created_at) nuevaOrden.created_at = data[0].created_at;
+                    }
+                } catch (err) {
+                    console.error('Error de conexión con la BD:', err);
+                }
+            }
+
+            knownPendingOrderIds.add(nuevaOrden.id);
+            pendingOrders.unshift(nuevaOrden);
+            playKitchenBell();
+
+            const latency = Math.round(performance.now() - start);
+
+            mostrarTicketDigital(nuevaOrden, customerName, deliveryLoc, deliveryPhone, cashReceived, cashChange, latency);
+
+            cartItems = [];
+            cartTotal = 0;
+            document.getElementById('input-customer-name').value = '';
+            document.getElementById('input-delivery-location').value = '';
+            document.getElementById('input-delivery-phone').value = '';
+            updateCartUI();
+            closeCheckoutModal();
+        }
+
+        // MOSTRAR VISTA PREVIA DE TICKET DE ORDEN INDIVIDUAL (SIN DESCARGA AUTOMÁTICA)
+        function mostrarTicketDigital(orden, customerName, deliveryLoc, deliveryPhone, cashReceived = null, cashChange = null, latency = null) {
+            currentTicketFilename = `Ticket_Panchiburguers_Orden_${orden.id}`;
+
+            const dateObj = orden.created_at ? new Date(orden.created_at) : new Date();
+            const nowStr = dateObj.toLocaleString('es-MX', {
+                dateStyle: 'short',
+                timeStyle: 'short'
+            });
+
+            const meta = splitOrderTypeMeta(orden.tipo_orden);
+            const displayCustomer = customerName || meta.customerName || 'Cliente';
+            const displayModality = meta.baseType || currentOrderType;
+            const displayDelivery = deliveryLoc
+                ? `${deliveryLoc}${deliveryPhone ? ` (Tel: ${deliveryPhone})` : ''}`
+                : meta.deliveryDetails;
+
+            const itemsReceiptHtml = (orden.productos || []).map(item => `
+                <div style="margin-bottom: 6px;">
+                    <div class="receipt-row">
+                        <strong>1x ${item.name}</strong>
+                        <strong>$${Number(item.price).toFixed(2)}</strong>
+                    </div>
+                    ${item.modifiers && item.modifiers.length > 0 
+                        ? `<div style="font-size: 0.76rem; color: #475569;">  + ${item.modifiers.join(', ')}</div>` 
+                        : ''}
+                </div>
+            `).join('');
+
+            const cashDetailsHtml = (orden.metodo_pago === 'Efectivo' && cashReceived !== null && cashChange !== null) ? `
+                <div class="receipt-row" style="font-size: 0.82rem; color: #475569;">
+                    <span>Efectivo recibido:</span>
+                    <span>$${Number(cashReceived).toFixed(2)} MXN</span>
+                </div>
+                <div class="receipt-row" style="font-size: 0.85rem; font-weight: bold; color: #16a34a;">
+                    <span>Cambio entregado:</span>
+                    <span>$${Number(cashChange).toFixed(2)} MXN</span>
+                </div>
+            ` : '';
+
+            const deliveryReceiptHtml = displayDelivery ? `
+                <div style="font-size: 0.8rem; background: #f1f5f9; padding: 6px; border-radius: 6px; margin-bottom: 8px;">
+                    <strong>📍 Ubicación de entrega:</strong> ${displayDelivery}
+                </div>
+            ` : '';
+
+            document.getElementById('digital-receipt-content').innerHTML = `
+                <div class="receipt-header">
+                    <h4 style="font-size: 1.15rem; font-weight: 900; margin-bottom: 2px;">🍔 PANCHIBURGUERS</h4>
+                    <div style="font-size: 0.78rem; color: #475569;">FES CUAUTITLÁN · TICKET DE COMPRA</div>
+                    <div class="receipt-folio">ORDEN #${orden.id}</div>
+                    <div style="font-size: 0.76rem; color: #64748b;">${nowStr}${latency ? ` · (${latency}ms)` : ''}</div>
+                </div>
+                <div style="margin-bottom: 10px; font-size: 0.84rem;">
+                    <div><strong>👤 Cliente:</strong> ${displayCustomer}</div>
+                    <div><strong>🍽️ Modalidad:</strong> ${displayModality}</div>
+                    <div><strong>📌 Estado:</strong> ${orden.estado || 'Pendiente'}</div>
+                </div>
+                ${deliveryReceiptHtml}
+                <div style="border-top: 1px dashed #cbd5e1; padding-top: 8px;">
+                    ${itemsReceiptHtml}
+                </div>
+                <div class="receipt-total-box">
+                    <div class="receipt-row" style="font-size: 1.05rem; font-weight: 900;">
+                        <span>TOTAL PAGADO:</span>
+                        <span>$${Number(orden.total).toFixed(2)} MXN</span>
+                    </div>
+                    <div class="receipt-row" style="font-size: 0.82rem; color: #475569;">
+                        <span>Método de pago:</span>
+                        <span>${orden.metodo_pago || 'Efectivo'}</span>
+                    </div>
+                    ${cashDetailsHtml}
+                </div>
+            `;
+
+            const goOrdersBtn = document.getElementById('btn-ticket-go-orders');
+            const inOrdersView = document.getElementById('section-ordenes').classList.contains('active');
+            goOrdersBtn.style.display = inOrdersView ? 'none' : 'block';
+
+            document.getElementById('ticket-modal').style.display = 'flex';
+        }
+
+        // ABRIR TICKET DE ORDEN SIN DESCARGAR AUTOMÁTICAMENTE
+        function abrirTicketDesdeOrden(orderId) {
+            const allOrders = [...pendingOrders, ...deliveredOrders];
+            const orden = allOrders.find(o => o.id === orderId);
+            if (!orden) return;
+
+            mostrarTicketDigital(orden, null, null, null, null, null, null);
+        }
+
+        // =========================================================================
+        // TICKET DE RESUMEN DEL DÍA / CORTE GENERAL (PARA DESCARGAR EN IMG O PDF)
+        // =========================================================================
+        function abrirTicketResumenPorDia(dayLabel) {
+            const allOrders = [...deliveredOrders, ...pendingOrders];
+            const ordersOfDay = allOrders.filter(o => formatDayHeader(o.created_at) === dayLabel);
+
+            if (ordersOfDay.length === 0) {
+                alert('No hay órdenes registradas en esta fecha para generar el resumen.');
+                return;
+            }
+
+            generarVistaPreviaTicketResumen(dayLabel.replace('📅 ', ''), ordersOfDay);
+        }
+
+        function abrirTicketResumenGeneral() {
+            const allOrders = [...deliveredOrders, ...pendingOrders];
+            if (allOrders.length === 0) {
+                alert('Aún no hay órdenes registradas para generar el ticket de resumen.');
+                return;
+            }
+
+            const todayFormatted = formatDayHeader(new Date().toISOString()).replace('📅 ', '');
+            generarVistaPreviaTicketResumen(`Resumen General (${todayFormatted})`, allOrders);
+        }
+
+        function generarVistaPreviaTicketResumen(tituloFecha, ordersList) {
+            const cleanSlug = tituloFecha.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 28);
+            currentTicketFilename = `Corte_Resumen_${cleanSlug}`;
+
+            const nowStr = new Date().toLocaleString('es-MX', {
+                dateStyle: 'short',
+                timeStyle: 'short'
+            });
+
+            let countEntregadas = 0;
+            let countActivas = 0;
+            let sumEfectivo = 0;
+            let sumTarjeta = 0;
+            let sumQR = 0;
+            let sumCortesia = 0;
+            let totalRecaudado = 0;
+
+            const productSummary = {};
+
+            ordersList.forEach(orden => {
+                const isDelivered = orden.estado === 'Entregada';
+                if (isDelivered) countEntregadas++;
+                else countActivas++;
+
+                const amount = Number(orden.total || 0);
+                const method = orden.metodo_pago || 'Efectivo';
+
+                if (method === 'Efectivo') sumEfectivo += amount;
+                else if (method === 'Tarjeta') sumTarjeta += amount;
+                else if (method === 'Transfer QR') sumQR += amount;
+                else if (method === 'Cortesía') sumCortesia += amount;
+
+                if (method !== 'Cortesía') {
+                    totalRecaudado += amount;
+                }
+
+                (orden.productos || []).forEach(prod => {
+                    const pName = prod.name || 'Producto';
+                    const pPrice = Number(prod.price || 0);
+                    if (!productSummary[pName]) {
+                        productSummary[pName] = { qty: 0, subtotal: 0 };
+                    }
+                    productSummary[pName].qty += 1;
+                    productSummary[pName].subtotal += pPrice;
+                });
+            });
+
+            const productsBreakdownHtml = Object.keys(productSummary).map(pName => {
+                const info = productSummary[pName];
+                return `
+                    <div class="receipt-row">
+                        <span>${info.qty}x ${pName}</span>
+                        <strong>$${info.subtotal.toFixed(2)}</strong>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('digital-receipt-content').innerHTML = `
+                <div class="receipt-header">
+                    <h4 style="font-size: 1.15rem; font-weight: 900; margin-bottom: 2px;">🍔 PANCHIBURGUERS</h4>
+                    <div style="font-size: 0.78rem; color: #475569;">FES CUAUTITLÁN · CORTE Y RESUMEN DEL DÍA</div>
+                    <div class="receipt-folio">RESUMEN DE VENTAS</div>
+                    <div style="font-size: 0.78rem; font-weight: bold; color: #0f172a; margin-top: 4px;">${tituloFecha}</div>
+                    <div style="font-size: 0.74rem; color: #64748b;">Generado: ${nowStr}</div>
+                </div>
+
+                <div style="margin-bottom: 10px; font-size: 0.83rem;">
+                    <div class="receipt-row">
+                        <span>Total de órdenes del periodo:</span>
+                        <strong>${ordersList.length}</strong>
+                    </div>
+                    <div class="receipt-row" style="color: #16a34a;">
+                        <span>• Órdenes Entregadas:</span>
+                        <strong>${countEntregadas}</strong>
+                    </div>
+                    <div class="receipt-row" style="color: #ea580c;">
+                        <span>• Órdenes Activas / Cocina:</span>
+                        <strong>${countActivas}</strong>
+                    </div>
+                </div>
+
+                <div style="border-top: 1px dashed #cbd5e1; padding-top: 8px; margin-bottom: 8px;">
+                    <div style="font-size: 0.8rem; font-weight: 900; margin-bottom: 6px; text-transform: uppercase;">
+                        🍔 Productos Vendidos:
+                    </div>
+                    ${productsBreakdownHtml || '<div style="font-size:0.8rem;">Sin productos</div>'}
+                </div>
+
+                <div style="border-top: 1px dashed #cbd5e1; padding-top: 8px;">
+                    <div style="font-size: 0.8rem; font-weight: 900; margin-bottom: 6px; text-transform: uppercase;">
+                        💳 Desglose por Método de Pago:
+                    </div>
+                    <div class="receipt-row">
+                        <span>💵 Efectivo:</span>
+                        <strong>$${sumEfectivo.toFixed(2)} MXN</strong>
+                    </div>
+                    <div class="receipt-row">
+                        <span>💳 Tarjeta:</span>
+                        <strong>$${sumTarjeta.toFixed(2)} MXN</strong>
+                    </div>
+                    <div class="receipt-row">
+                        <span>📱 Transfer QR:</span>
+                        <strong>$${sumQR.toFixed(2)} MXN</strong>
+                    </div>
+                    <div class="receipt-row">
+                        <span>🎫 Cortesías:</span>
+                        <strong>$${sumCortesia.toFixed(2)} MXN</strong>
+                    </div>
+                </div>
+
+                <div class="receipt-total-box">
+                    <div class="receipt-row" style="font-size: 1.05rem; font-weight: 900; color: #0f172a;">
+                        <span>TOTAL VENDIDO:</span>
+                        <span>$${totalRecaudado.toFixed(2)} MXN</span>
+                    </div>
+                </div>
+            `;
+
+            const goOrdersBtn = document.getElementById('btn-ticket-go-orders');
+            goOrdersBtn.style.display = 'none';
+
+            document.getElementById('ticket-modal').style.display = 'flex';
+        }
+
+        // DESCARGAR EL TICKET ACTUAL EN PDF (.PDF) CUANDO EL USUARIO LO SELECCIONA
+        async function descargarTicketComoPDF() {
+            const ticketElement = document.getElementById('digital-receipt-content');
+            if (!ticketElement) return;
+
+            if (typeof html2canvas === 'function' && window.jspdf && window.jspdf.jsPDF) {
+                try {
+                    const canvas = await html2canvas(ticketElement, {
+                        scale: 2,
+                        backgroundColor: '#ffffff'
+                    });
+                    const imgData = canvas.toDataURL('image/png');
+                    const { jsPDF } = window.jspdf;
+
+                    const pdfWidth = 80;
+                    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+                    const pdf = new jsPDF({
+                        orientation: 'portrait',
+                        unit: 'mm',
+                        format: [pdfWidth, Math.max(pdfHeight + 10, 100)]
+                    });
+
+                    pdf.addImage(imgData, 'PNG', 4, 5, pdfWidth - 8, pdfHeight - 6);
+                    pdf.save(`${currentTicketFilename}.pdf`);
+                    showToastNotification('📄 Ticket descargado en PDF');
+                } catch (err) {
+                    console.error('Error al generar PDF del ticket:', err);
+                    alert('No se pudo generar el PDF del ticket.');
+                }
+            } else {
+                alert('La librería PDF aún está cargando. Intenta de nuevo en un segundo.');
+            }
+        }
+
+        // DESCARGAR EL TICKET ACTUAL EN IMAGEN (.PNG) CUANDO EL USUARIO LO SELECCIONA
+        async function descargarTicketComoImagen() {
+            const ticketElement = document.getElementById('digital-receipt-content');
+            if (!ticketElement) return;
+
+            if (typeof html2canvas === 'function') {
+                try {
+                    const canvas = await html2canvas(ticketElement, {
+                        scale: 2,
+                        backgroundColor: '#ffffff'
+                    });
+                    const link = document.createElement('a');
+                    link.download = `${currentTicketFilename}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                    showToastNotification('🖼️ Ticket descargado como imagen');
+                } catch (err) {
+                    console.error('Error al generar imagen del ticket:', err);
+                    alert('No se pudo generar la imagen del ticket.');
+                }
+            }
+        }
+
+        function closeTicketModal(targetView) {
+            document.getElementById('ticket-modal').style.display = 'none';
+            if (targetView) {
+                switchView(targetView);
+            }
+        }
+
+        // =========================================================================
+        // PANTALLA DE ÓRDENES AGRUPADAS POR DÍA Y CON BOTÓN DE RESUMEN POR FECHA
+        // =========================================================================
+        function splitOrderTypeMeta(rawTipoOrden) {
+            if (!rawTipoOrden) {
+                return { baseType: 'Comer Aquí', customerInfo: '', customerName: 'Cliente', deliveryDetails: '' };
+            }
+            const parts = rawTipoOrden.split(' | ');
+            const baseType = parts[0] || 'Comer Aquí';
+            const customerName = parts[1] ? parts[1].replace('👤', '').trim() : 'Cliente';
+            const deliveryDetails = parts[2] ? parts[2].replace('📍', '').trim() : '';
+
+            return {
+                baseType,
+                customerInfo: parts.slice(1).join(' · '),
+                customerName,
+                deliveryDetails
+            };
+        }
+
+        function formatDayHeader(isoDateString) {
+            const d = isoDateString ? new Date(isoDateString) : new Date();
+            if (isNaN(d.getTime())) return '📅 Hoy';
+            const formatted = d.toLocaleDateString('es-MX', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            return '📅 ' + formatted.charAt(0).toUpperCase() + formatted.slice(1);
+        }
+
+        function formatOrderTime(isoDateString) {
+            const d = isoDateString ? new Date(isoDateString) : new Date();
+            if (isNaN(d.getTime())) return '';
+            return d.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function groupOrdersByDay(ordersList) {
+            const groups = {};
+            ordersList.forEach(orden => {
+                const dayLabel = formatDayHeader(orden.created_at);
+                if (!groups[dayLabel]) {
+                    groups[dayLabel] = [];
+                }
+                groups[dayLabel].push(orden);
+            });
+            return groups;
+        }
+
+        function renderOrdersSection() {
+            const pendingContainer = document.getElementById('pending-orders-container');
+            const deliveredContainer = document.getElementById('delivered-orders-container');
+            const revenueBanner = document.getElementById('delivered-total-revenue');
+
+            // 1. Renderizar Órdenes Activas (Pendientes o En Preparación) agrupadas por Día
+            if (pendingOrders.length === 0) {
+                pendingContainer.innerHTML = `<div class="empty-orders-msg">No hay órdenes activas en este momento.</div>`;
+            } else {
+                const groupedActive = groupOrdersByDay(pendingOrders);
+                let activeHtml = '';
+
+                Object.keys(groupedActive).forEach(dayLabel => {
+                    const ordersOfDay = groupedActive[dayLabel];
+                    const safeDayArg = dayLabel.replace(/'/g, "\\'");
+
+                    activeHtml += `
+                        <div class="day-group-header">
+                            <span>${dayLabel}</span>
+                            <div class="day-header-right">
+                                <span style="font-size: 0.78rem; color: #cbd5e1;">${ordersOfDay.length} activa(s)</span>
+                                <button class="btn-day-summary-ticket" onclick="abrirTicketResumenPorDia('${safeDayArg}')">
+                                    🧾 Ticket Resumen del Día
+                                </button>
+                            </div>
+                        </div>
+                    `;
+
+                    activeHtml += ordersOfDay.map(orden => {
+                        const meta = splitOrderTypeMeta(orden.tipo_orden);
+                        const isPreparing = orden.estado === 'En Preparación';
+                        const timeStr = formatOrderTime(orden.created_at);
+
+                        const statusBadge = isPreparing
+                            ? `<span class="status-pill-badge preparing">👨‍🍳 En Preparación</span>`
+                            : `<span class="status-pill-badge pending">⏳ Recibida</span>`;
+
+                        const prepButtonHtml = isPreparing
+                            ? `<button class="btn-preparing active-prep" disabled>🔥 Cocinando...</button>`
+                            : `<button class="btn-preparing" onclick="marcarEnPreparacion(${orden.id})">👨‍🍳 En Preparación</button>`;
+
+                        const itemsHtml = (orden.productos || []).map(item => `
+                            <p style="font-size: 0.9rem; color: #cbd5e1; margin-bottom: 2px;">• 1x ${item.name} ($${Number(item.price).toFixed(2)})</p>
+                            ${item.modifiers && item.modifiers.length > 0 ? `<div class="modifier-subtext">↳ ${item.modifiers.join(', ')}</div>` : ''}
+                        `).join('');
+
+                        return `
+                            <div class="kds-card ${isPreparing ? 'preparing' : ''}">
+                                <div class="kds-head">
+                                    <div>
+                                        <span>Orden #${orden.id} (${meta.baseType})</span>
+                                        ${timeStr ? `<small style="color:#94a3b8; margin-left:6px;">🕒 ${timeStr}</small>` : ''}
+                                    </div>
+                                    <div style="display:flex; align-items:center; gap:8px;">
+                                        ${statusBadge}
+                                        <span class="order-cost-tag">Costo: $${Number(orden.total).toFixed(2)} MXN</span>
+                                    </div>
+                                </div>
+                                ${meta.customerInfo ? `<div class="customer-badge">${meta.customerInfo}</div>` : ''}
+                                <div style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 8px;">Pago: ${orden.metodo_pago || 'Efectivo'}</div>
+                                ${itemsHtml}
+                                <div class="kds-actions-row">
+                                    ${prepButtonHtml}
+                                    <button class="btn-dispatch" onclick="solicitarEntregarOrden(${orden.id})">✅ Entregar Orden</button>
+                                    <button class="btn-order-ticket" onclick="abrirTicketDesdeOrden(${orden.id})">🧾 Ver / Descargar Ticket</button>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                });
+
+                pendingContainer.innerHTML = activeHtml;
+            }
+
+            // 2. Calcular Corte de Caja y Renderizar Órdenes Entregadas agrupadas por Día
+            let totalRevenue = 0;
+            let sumEfectivo = 0;
+            let sumTarjeta = 0;
+            let sumQR = 0;
+            let sumCortesia = 0;
+
+            if (deliveredOrders.length === 0) {
+                deliveredContainer.innerHTML = `<div class="empty-orders-msg">Aún no se han entregado órdenes.</div>`;
+            } else {
+                deliveredOrders.forEach(orden => {
+                    const amount = Number(orden.total || 0);
+                    const method = orden.metodo_pago || 'Efectivo';
+
+                    if (method === 'Efectivo') sumEfectivo += amount;
+                    else if (method === 'Tarjeta') sumTarjeta += amount;
+                    else if (method === 'Transfer QR') sumQR += amount;
+                    else if (method === 'Cortesía') sumCortesia += amount;
+
+                    if (method !== 'Cortesía') {
+                        totalRevenue += amount;
+                    }
+                });
+
+                const groupedDelivered = groupOrdersByDay(deliveredOrders);
+                let deliveredHtml = '';
+
+                Object.keys(groupedDelivered).forEach(dayLabel => {
+                    const ordersOfDay = groupedDelivered[dayLabel];
+                    const daySum = ordersOfDay.reduce((acc, o) => acc + (o.metodo_pago !== 'Cortesía' ? Number(o.total || 0) : 0), 0);
+                    const safeDayArg = dayLabel.replace(/'/g, "\\'");
+
+                    deliveredHtml += `
+                        <div class="day-group-header">
+                            <span>${dayLabel}</span>
+                            <div class="day-header-right">
+                                <span style="font-size: 0.82rem; color: #22c55e;">Total del día: $${daySum.toFixed(2)} MXN</span>
+                                <button class="btn-day-summary-ticket" onclick="abrirTicketResumenPorDia('${safeDayArg}')">
+                                    🧾 Ticket Resumen del Día
+                                </button>
+                            </div>
+                        </div>
+                    `;
+
+                    deliveredHtml += ordersOfDay.map(orden => {
+                        const amount = Number(orden.total || 0);
+                        const method = orden.metodo_pago || 'Efectivo';
+                        const meta = splitOrderTypeMeta(orden.tipo_orden);
+                        const timeStr = formatOrderTime(orden.created_at);
+
+                        const itemsHtml = (orden.productos || []).map(item => `
+                            <p style="font-size: 0.88rem; color: #94a3b8; margin-bottom: 2px;">• 1x ${item.name}</p>
+                            ${item.modifiers && item.modifiers.length > 0 ? `<div class="modifier-subtext">↳ ${item.modifiers.join(', ')}</div>` : ''}
+                        `).join('');
+
+                        return `
+                            <div class="kds-card delivered">
+                                <div class="kds-head">
+                                    <div>
+                                        <span>Orden #${orden.id} (${meta.baseType}) — Entregada</span>
+                                        ${timeStr ? `<small style="color:#94a3b8; margin-left:6px;">🕒 ${timeStr}</small>` : ''}
+                                    </div>
+                                    <span class="order-cost-tag">Costo: $${amount.toFixed(2)} MXN</span>
+                                </div>
+                                ${meta.customerInfo ? `<div class="customer-badge">${meta.customerInfo}</div>` : ''}
+                                <div style="font-size: 0.8rem; color: #38bdf8; margin-bottom: 8px;">Método de Pago: ${method}</div>
+                                ${itemsHtml}
+                                <div class="kds-actions-row">
+                                    <button class="btn-order-ticket" onclick="abrirTicketDesdeOrden(${orden.id})">🧾 Ver / Descargar Ticket (IMG o PDF)</button>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                });
+
+                deliveredContainer.innerHTML = deliveredHtml;
+            }
+
+            document.getElementById('cashout-efectivo').innerText = `$${sumEfectivo.toFixed(2)}`;
+            document.getElementById('cashout-tarjeta').innerText = `$${sumTarjeta.toFixed(2)}`;
+            document.getElementById('cashout-qr').innerText = `$${sumQR.toFixed(2)}`;
+            document.getElementById('cashout-cortesia').innerText = `$${sumCortesia.toFixed(2)}`;
+            revenueBanner.innerText = `$${totalRevenue.toFixed(2)} MXN`;
+        }
+
+        // CAMBIAR ESTADO A "EN PREPARACIÓN"
+        async function marcarEnPreparacion(orderId) {
+            const orden = pendingOrders.find(o => o.id === orderId);
+            if (orden) {
+                orden.estado = 'En Preparación';
+                renderOrdersSection();
+                showToastNotification(`👨‍🍳 Orden #${orderId} marcada En Preparación`);
+            }
+
+            if (supabaseClient) {
+                await supabaseClient
+                    .from('ordenes')
+                    .update({ estado: 'En Preparación' })
+                    .eq('id', orderId);
+                await cargarOrdenesDesdeBD();
+            }
+        }
+
+        function solicitarEntregarOrden(orderId) {
+            requireStaffPin(() => {
+                entregarOrden(orderId);
+            });
+        }
+
+        async function entregarOrden(orderId) {
+            const index = pendingOrders.findIndex(o => o.id === orderId);
+            if (index !== -1) {
+                const ordenEntregada = pendingOrders.splice(index, 1)[0];
+                ordenEntregada.estado = 'Entregada';
+                deliveredOrders.unshift(ordenEntregada);
+            }
+
+            if (supabaseClient) {
+                await supabaseClient
+                    .from('ordenes')
+                    .update({ estado: 'Entregada' })
+                    .eq('id', orderId);
+                await cargarOrdenesDesdeBD();
+            } else {
+                renderOrdersSection();
+            }
+        }
+
+        // =========================================================================
+        // SINCRONIZACIÓN AUTOMÁTICA CON SUPABASE
+        // =========================================================================
+        async function cargarOrdenesDesdeBD() {
+            if (!supabaseClient) return;
+            try {
+                const { data, error } = await supabaseClient
+                    .from('ordenes')
+                    .select('*')
+                    .order('id', { ascending: false });
+
+                if (error) {
+                    console.error('Error al consultar órdenes:', error);
+                    return;
+                }
+
+                const newPending = data.filter(o => o.estado === 'Pendiente' || o.estado === 'En Preparación');
+                const newDelivered = data.filter(o => o.estado === 'Entregada');
+
+                let hasBrandNewOrder = false;
+                newPending.forEach(o => {
+                    if (!knownPendingOrderIds.has(o.id)) {
+                        knownPendingOrderIds.add(o.id);
+                        if (initialLoadComplete) {
+                            hasBrandNewOrder = true;
+                        }
+                    }
+                });
+
+                if (hasBrandNewOrder && isStaffAuthorized) {
+                    playKitchenBell();
+                    showToastNotification('🔔 ¡Llegó una nueva orden a cocina!');
+                }
+
+                initialLoadComplete = true;
+                pendingOrders = newPending;
+                deliveredOrders = newDelivered;
+                renderOrdersSection();
+            } catch (err) {
+                console.error('Error al sincronizar órdenes:', err);
+            }
+        }
+
+        if (supabaseClient) {
+            cargarOrdenesDesdeBD();
+            setInterval(() => {
+                cargarOrdenesDesdeBD();
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
