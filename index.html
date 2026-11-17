@@ -103,7 +103,7 @@
             font-weight: bold;
             cursor: pointer;
             transition: all 0.2s;
-            display: none; /* Oculto en la Portada */
+            display: none;
         }
 
         .btn-staff-lock.unlocked {
@@ -122,7 +122,7 @@
             font-weight: bold;
             cursor: pointer;
             transition: all 0.2s;
-            display: none; /* Oculto en la Portada */
+            display: none;
         }
 
         .btn-reset-orders:hover {
@@ -166,20 +166,22 @@
             background: #111827;
             padding: 10px 15px;
             display: none;
-            gap: 10px;
+            gap: 8px;
             border-bottom: 2px solid #1f2937;
+            flex-wrap: wrap;
         }
 
         .nav-tab-btn {
             background: #1e293b;
             color: #cbd5e1;
             border: 1px solid #334155;
-            padding: 8px 14px;
+            padding: 8px 12px;
             border-radius: 8px;
-            font-size: 0.85rem;
+            font-size: 0.84rem;
             font-weight: 600;
             cursor: pointer;
             flex: 1;
+            min-width: 110px;
             text-align: center;
         }
 
@@ -189,27 +191,53 @@
             border-color: #f97316;
         }
 
-        /* CATEGORÍAS HORIZONTALES */
+        /* CATEGORÍAS HORIZONTALES DEL MENÚ */
         .categories-scroll {
             display: flex;
-            gap: 10px;
-            padding: 15px 0;
+            gap: 8px;
+            padding: 14px 0;
             overflow-x: auto;
             align-items: center;
-            justify-content: space-between;
         }
 
         .cat-chip {
-            background: #f97316;
-            color: #ffffff;
-            padding: 8px 18px;
+            background: #1e293b;
+            color: #cbd5e1;
+            border: 1px solid #334155;
+            padding: 8px 16px;
             border-radius: 20px;
-            font-size: 0.85rem;
+            font-size: 0.84rem;
             font-weight: bold;
             white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.2s;
         }
 
-        /* TABLERO EN VIVO DE ESTADO DE ÓRDENES PARA CLIENTES (EN MENÚ) */
+        .cat-chip.active {
+            background: #f97316;
+            color: #ffffff;
+            border-color: #f97316;
+            box-shadow: 0 0 10px rgba(249, 115, 22, 0.35);
+        }
+
+        /* BANNER DE VERDURA Y ADEREZOS DEL PUESTO */
+        .menu-ingredients-banner {
+            background: linear-gradient(90deg, rgba(249, 115, 22, 0.12) 0%, rgba(30, 41, 59, 0.9) 100%);
+            border: 1px solid #334155;
+            border-left: 4px solid #f97316;
+            border-radius: 12px;
+            padding: 10px 14px;
+            margin-bottom: 14px;
+            font-size: 0.82rem;
+            color: #e2e8f0;
+            line-height: 1.45;
+        }
+
+        .menu-ingredients-banner strong {
+            color: #facc15;
+        }
+
+        /* TABLERO EN VIVO DE ESTADO DE ÓRDENES PARA CLIENTES */
         .client-live-board {
             background: #111827;
             border: 1px solid #334155;
@@ -290,7 +318,7 @@
             100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
         }
 
-        /* BANNER EMERGENTE DE NOTIFICACIÓN PARA EL CLIENTE (CON NÚMERO Y NOMBRE) */
+        /* BANNER EMERGENTE DE NOTIFICACIÓN PARA EL CLIENTE */
         .client-status-alert-banner {
             position: fixed;
             top: 18px;
@@ -308,17 +336,9 @@
             text-align: center;
         }
 
-        .client-status-alert-banner.prep-style {
-            border-color: #f97316;
-        }
-
-        .client-status-alert-banner.ready-style {
-            border-color: #22c55e;
-        }
-
-        .client-status-alert-banner.delivered-style {
-            border-color: #38bdf8;
-        }
+        .client-status-alert-banner.prep-style { border-color: #f97316; }
+        .client-status-alert-banner.ready-style { border-color: #22c55e; }
+        .client-status-alert-banner.delivered-style { border-color: #38bdf8; }
 
         .alert-badge-title {
             font-size: 0.82rem;
@@ -363,7 +383,7 @@
         .container {
             padding: 10px 15px;
             flex: 1;
-            max-width: 900px;
+            max-width: 920px;
             width: 100%;
             margin: 0 auto;
         }
@@ -376,7 +396,7 @@
             display: block;
         }
 
-        /* PORTADA MEJORADA */
+        /* PORTADA */
         .cover-box {
             background: radial-gradient(circle at top, #1e293b 0%, #0f172a 70%, #0b0f19 100%);
             border: 1px solid #334155;
@@ -513,12 +533,20 @@
         }
 
         /* TARJETAS DE PRODUCTOS */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(275px, 1fr));
+            gap: 18px;
+        }
+
         .product-card {
             background: #1e293b;
             border: 1px solid #334155;
             border-radius: 16px;
             overflow: hidden;
-            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
             position: relative;
             box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         }
@@ -526,7 +554,7 @@
         .card-img-container {
             position: relative;
             width: 100%;
-            height: 180px;
+            height: 165px;
         }
 
         .card-img-container img {
@@ -549,20 +577,37 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.4);
         }
 
+        .category-tag-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: rgba(15, 23, 42, 0.88);
+            color: #facc15;
+            border: 1px solid #475569;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.72rem;
+            font-weight: 700;
+        }
+
         .card-content {
             padding: 15px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            justify-content: space-between;
         }
 
         .card-content h3 {
-            font-size: 1.15rem;
+            font-size: 1.1rem;
             color: #ffffff;
             margin-bottom: 6px;
         }
 
         .card-content p {
-            font-size: 0.85rem;
+            font-size: 0.83rem;
             color: #94a3b8;
-            margin-bottom: 15px;
+            margin-bottom: 14px;
             line-height: 1.4;
         }
 
@@ -579,7 +624,7 @@
             padding: 10px;
             border-radius: 10px;
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.88rem;
             cursor: pointer;
             text-align: center;
             transition: all 0.2s;
@@ -596,10 +641,174 @@
             padding: 10px;
             border-radius: 10px;
             font-weight: bold;
-            font-size: 0.9rem;
+            font-size: 0.88rem;
             cursor: pointer;
             text-align: center;
             box-shadow: 0 0 10px rgba(249, 115, 22, 0.3);
+        }
+
+        /* SECCIÓN DE INVENTARIO Y MATERIA PRIMA */
+        .inventory-alert-box {
+            background: rgba(239, 68, 68, 0.12);
+            border: 1px solid #ef4444;
+            border-left: 5px solid #ef4444;
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin: 12px 0 18px 0;
+        }
+
+        .inventory-alert-box.all-good {
+            background: rgba(34, 197, 94, 0.12);
+            border-color: #22c55e;
+            border-left-color: #22c55e;
+        }
+
+        .inventory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(265px, 1fr));
+            gap: 14px;
+            margin-top: 12px;
+            margin-bottom: 25px;
+        }
+
+        .inventory-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-left: 5px solid #22c55e;
+            border-radius: 12px;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .inventory-card.low-stock {
+            border-left-color: #f59e0b;
+            background: linear-gradient(135deg, #1e293b 0%, rgba(245, 158, 11, 0.1) 100%);
+        }
+
+        .inventory-card.out-of-stock {
+            border-left-color: #ef4444;
+            background: linear-gradient(135deg, #1e293b 0%, rgba(239, 68, 68, 0.15) 100%);
+        }
+
+        .inv-card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .inv-card-top strong {
+            font-size: 0.96rem;
+            color: #ffffff;
+            display: block;
+        }
+
+        .inv-card-top small {
+            color: #94a3b8;
+            font-size: 0.76rem;
+        }
+
+        .inv-status-badge {
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 0.72rem;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .inv-status-badge.ok {
+            background: rgba(34, 197, 94, 0.18);
+            color: #4ade80;
+            border: 1px solid #22c55e;
+        }
+
+        .inv-status-badge.low {
+            background: rgba(245, 158, 11, 0.2);
+            color: #fbbf24;
+            border: 1px solid #f59e0b;
+        }
+
+        .inv-status-badge.empty {
+            background: rgba(239, 68, 68, 0.25);
+            color: #f87171;
+            border: 1px solid #ef4444;
+        }
+
+        .inv-stock-number {
+            font-size: 1.35rem;
+            font-weight: 900;
+            color: #facc15;
+        }
+
+        .inv-progress-bg {
+            width: 100%;
+            height: 7px;
+            background: #0f172a;
+            border-radius: 6px;
+            overflow: hidden;
+            margin-top: 4px;
+        }
+
+        .inv-progress-fill {
+            height: 100%;
+            background: #22c55e;
+            transition: width 0.25s;
+        }
+
+        .inv-restock-controls {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-top: 4px;
+        }
+
+        .inv-input-qty {
+            width: 68px;
+            background: #0f172a;
+            border: 1px solid #475569;
+            color: #ffffff;
+            padding: 6px 8px;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            text-align: center;
+        }
+
+        .btn-inv-add {
+            background: #22c55e;
+            color: #0b0f19;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            font-weight: 800;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .btn-inv-quick {
+            background: #0f172a;
+            color: #38bdf8;
+            border: 1px solid #38bdf8;
+            padding: 5px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn-inv-minus {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+            border: 1px solid #ef4444;
+            padding: 5px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            cursor: pointer;
         }
 
         /* CARRITO / TICKET FLOTANTE */
@@ -657,17 +866,9 @@
             padding: 16px;
         }
 
-        #checkout-modal {
-            z-index: 1000;
-        }
-
-        #modify-modal {
-            z-index: 1250;
-        }
-
-        #ticket-modal, #pin-modal, #support-modal {
-            z-index: 1350;
-        }
+        #checkout-modal { z-index: 1000; }
+        #modify-modal { z-index: 1250; }
+        #ticket-modal, #pin-modal, #support-modal { z-index: 1350; }
 
         .modal-card {
             background: #1e293b;
@@ -687,7 +888,7 @@
             font-size: 1.3rem;
         }
 
-        /* TARJETAS DE SOPORTE (CREADORES) */
+        /* TARJETAS DE SOPORTE */
         .support-list {
             display: flex;
             flex-direction: column;
@@ -762,9 +963,7 @@
             gap: 10px;
         }
 
-        .cart-item-details {
-            flex: 1;
-        }
+        .cart-item-details { flex: 1; }
 
         .cart-item-details strong {
             color: #ffffff;
@@ -816,9 +1015,7 @@
         }
 
         /* CAMPOS DE CLIENTE Y DELIVERY */
-        .form-group {
-            margin-bottom: 10px;
-        }
+        .form-group { margin-bottom: 10px; }
 
         .form-input {
             width: 100%;
@@ -831,9 +1028,7 @@
             outline: none;
         }
 
-        .form-input:focus {
-            border-color: #f97316;
-        }
+        .form-input:focus { border-color: #f97316; }
 
         .delivery-fields-box {
             background: rgba(249, 115, 22, 0.08);
@@ -880,8 +1075,11 @@
         .options-list {
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            margin: 15px 0;
+            gap: 8px;
+            margin: 12px 0;
+            max-height: 310px;
+            overflow-y: auto;
+            padding-right: 4px;
         }
 
         .option-label {
@@ -890,10 +1088,10 @@
             align-items: center;
             background: #0f172a;
             border: 1px solid #334155;
-            padding: 12px 14px;
+            padding: 10px 12px;
             border-radius: 10px;
             cursor: pointer;
-            font-size: 0.9rem;
+            font-size: 0.86rem;
             color: #e2e8f0;
         }
 
@@ -906,7 +1104,7 @@
         .option-extra-price {
             color: #22c55e;
             font-weight: bold;
-            font-size: 0.85rem;
+            font-size: 0.82rem;
         }
 
         .payment-methods {
@@ -1158,9 +1356,7 @@
             background: rgba(250, 204, 21, 0.08);
         }
 
-        .cashout-card.highlight strong {
-            color: #facc15;
-        }
+        .cashout-card.highlight strong { color: #facc15; }
 
         .orders-section-title {
             color: #38bdf8;
@@ -1407,7 +1603,7 @@
         </div>
     </header>
 
-    <!-- SELECTOR DE TIPO DE PEDIDO (OCULTO EN PORTADA Y ÓRDENES, VISIBLE SOLO EN MENÚ) -->
+    <!-- SELECTOR DE TIPO DE PEDIDO (OCULTO EN PORTADA, ÓRDENES E INVENTARIO; VISIBLE SOLO EN MENÚ) -->
     <div id="order-type-bar" class="order-type-bar">
         <div class="type-pill active" onclick="setOrderType(this, 'Comer Aquí')">🍽️ Comer Aquí</div>
         <div class="type-pill" onclick="setOrderType(this, 'Para Llevar')">🛍️ Para Llevar</div>
@@ -1418,7 +1614,8 @@
     <div id="nav-tabs-bar" class="nav-tabs-bar">
         <button class="nav-tab-btn active" onclick="switchView('portada')" id="nav-btn-portada">🏠 Portada</button>
         <button class="nav-tab-btn" onclick="switchView('kiosco')" id="nav-btn-kiosco">🛒 Menú</button>
-        <button class="nav-tab-btn" onclick="switchView('ordenes')" id="nav-btn-ordenes">📋 Órdenes</button>
+        <button class="nav-tab-btn" onclick="switchView('ordenes')" id="nav-btn-ordenes">📋 Órdenes (PIN)</button>
+        <button class="nav-tab-btn" onclick="switchView('inventario')" id="nav-btn-inventario">📦 Inventario (PIN)</button>
     </div>
 
     <div class="container">
@@ -1429,18 +1626,18 @@
                 <div class="fes-badge">🎓 FES CUAUTITLÁN · UNAM</div>
                 <div class="cover-hero-icon">🍔</div>
                 <h2>PANCHIBURGUERS</h2>
-                <h3>SISTEMA PARA GESTIONAR ORDENES</h3>
+                <h3>SISTEMA PARA GESTIONAR ORDENES E INVENTARIO</h3>
 
                 <div class="welcome-banner-card">
-                    <p>Bienvenido a Panchiburguers, ingresa para realizar y administrar tu pedido</p>
-                    <span>Recibe notificaciones sonoras en tiempo real en tu celular cuando tu orden esté en preparación o lista para recoger.</span>
+                    <p>BIENVENIDO A PANCHIBURGUERS</p>
+                    <span>Menú oficial completo con Hamburguesas, Hot Dogs, Quesadillas, Papas y Refrescos, notificaciones en vivo y control de inventario.</span>
                 </div>
 
                 <div class="welcome-features-grid">
                     <div class="feature-mini-card">
                         <span class="f-icon">🍔</span>
-                        <strong>Menú Personalizable</strong>
-                        <small>Modifica ingredientes y sabores a tu gusto</small>
+                        <strong>Menú Completo</strong>
+                        <small>Hamburguesas, Hot Dogs, Quesadillas y Extras</small>
                     </div>
                     <div class="feature-mini-card">
                         <span class="f-icon">🔔</span>
@@ -1448,9 +1645,9 @@
                         <small>Alerta sonora con tu # de orden y nombre</small>
                     </div>
                     <div class="feature-mini-card">
-                        <span class="f-icon">📄</span>
-                        <strong>Tickets en PDF o Imagen</strong>
-                        <small>Descarga comprobantes y cortes por día</small>
+                        <span class="f-icon">📦</span>
+                        <strong>Control de Inventario</strong>
+                        <small>Descuento automático de insumos por venta</small>
                     </div>
                 </div>
 
@@ -1460,7 +1657,7 @@
             </div>
         </div>
 
-        <!-- 2. SECCIÓN MENÚ (INCLUYE MONITOR DE ÓRDENES EN VIVO PARA CLIENTES) -->
+        <!-- 2. SECCIÓN MENÚ COMPLETO DE PANCHIBURGUERS -->
         <div id="section-kiosco" class="view-section">
 
             <!-- PANTALLA EN VIVO PARA QUE EL CLIENTE VEA EL ESTADO DE SU ORDEN DESDE SU DISPOSITIVO -->
@@ -1474,7 +1671,7 @@
                 </div>
                 <div id="client-board-body">
                     <p style="font-size: 0.78rem; color: #94a3b8; margin-top: 4px;">
-                        Aquí puedes ver el avance de tu pedido por <strong>Número de Orden</strong> y <strong>Nombre</strong>. Tu dispositivo sonará cuando cambie de estado:
+                        Consulta el avance de tu pedido por <strong>Número de Orden</strong> y <strong>Nombre</strong>. Tu dispositivo sonará cuando esté en preparación o listo:
                     </p>
                     <div class="client-status-grid">
                         <div class="client-status-col">
@@ -1499,114 +1696,28 @@
                 </div>
             </div>
             
-            <!-- PESTAÑA UNIFICADA: ARMAR ORDEN -->
+            <!-- FILTROS DE CATEGORÍAS DEL MENÚ -->
             <div class="categories-scroll">
-                <div class="cat-chip">Armar orden</div>
+                <button class="cat-chip active" onclick="filterMenuCategory('todos', this)">🍽️ Armar orden (Todo)</button>
+                <button class="cat-chip" onclick="filterMenuCategory('hamburguesa', this)">🍔 Hamburguesas (10)</button>
+                <button class="cat-chip" onclick="filterMenuCategory('hotdog', this)">🌭 Hot Dogs (6)</button>
+                <button class="cat-chip" onclick="filterMenuCategory('quesadilla', this)">🧀 Quesadillas (1)</button>
+                <button class="cat-chip" onclick="filterMenuCategory('complemento', this)">🍟 Papas y Refrescos (2)</button>
             </div>
 
-            <!-- LISTA DE PRODUCTOS PANCHIBURGUERS -->
-            <div id="products-list-container">
-
-                <div class="product-card">
-                    <div class="card-img-container">
-                        <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd" alt="Sencilla">
-                        <div class="price-badge">$65.00</div>
-                    </div>
-                    <div class="card-content">
-                        <h3>Hamburguesa Sencilla</h3>
-                        <p>Carne de res artesanal, queso fundido, lechuga, jitomate y aderezo especial.</p>
-                        <div class="card-actions">
-                            <button class="btn-customize" onclick="openModifyModal('Hamburguesa Sencilla', 65, 'hamburguesa')">Modificar</button>
-                            <button class="btn-add" onclick="addItem('Hamburguesa Sencilla', 65, [], 65, 'hamburguesa')">+ Agregar</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="product-card">
-                    <div class="card-img-container">
-                        <img src="https://images.unsplash.com/photo-1586190848861-99aa4a171e90" alt="Quesillo">
-                        <div class="price-badge">$70.00</div>
-                    </div>
-                    <div class="card-content">
-                        <h3>Hamburguesa Quesillo</h3>
-                        <p>Delicioso quesillo fundido al estilo tradicional con aderezos y verduras frescas.</p>
-                        <div class="card-actions">
-                            <button class="btn-customize" onclick="openModifyModal('Hamburguesa Quesillo', 70, 'hamburguesa')">Modificar</button>
-                            <button class="btn-add" onclick="addItem('Hamburguesa Quesillo', 70, [], 70, 'hamburguesa')">+ Agregar</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="product-card">
-                    <div class="card-img-container">
-                        <img src="https://images.unsplash.com/photo-1550547660-d9450f859349" alt="Especial">
-                        <div class="price-badge">$80.00</div>
-                    </div>
-                    <div class="card-content">
-                        <h3>Hamburguesa Especial</h3>
-                        <p>Tocino, quesillo, queso amarillo, jamón y aderezos de la casa.</p>
-                        <div class="card-actions">
-                            <button class="btn-customize" onclick="openModifyModal('Hamburguesa Especial', 80, 'hamburguesa')">Modificar</button>
-                            <button class="btn-add" onclick="addItem('Hamburguesa Especial', 80, [], 80, 'hamburguesa')">+ Agregar</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="product-card">
-                    <div class="card-img-container">
-                        <img src="https://images.unsplash.com/photo-1553979459-d2229ba7433b" alt="Mega">
-                        <div class="price-badge">$100.00</div>
-                    </div>
-                    <div class="card-content">
-                        <h3>Hamburguesa Mega ★</h3>
-                        <p>Doble carne, quesillo, tocino, queso amarillo, jamón, piña y doble salchicha.</p>
-                        <div class="card-actions">
-                            <button class="btn-customize" onclick="openModifyModal('Hamburguesa Mega ★', 100, 'hamburguesa')">Modificar</button>
-                            <button class="btn-add" onclick="addItem('Hamburguesa Mega ★', 100, [], 100, 'hamburguesa')">+ Agregar</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="product-card">
-                    <div class="card-img-container">
-                        <img src="https://images.unsplash.com/photo-1573080496219-bb080dd4f877" alt="Papas">
-                        <div class="price-badge">$70.00</div>
-                    </div>
-                    <div class="card-content">
-                        <h3>Papas a la Francesa</h3>
-                        <p>Crujientes papas fritas sazonadas con un toque especial.</p>
-                        <div class="card-actions">
-                            <button class="btn-customize" onclick="openModifyModal('Papas a la Francesa', 70, 'papas')">Modificar</button>
-                            <button class="btn-add" onclick="addItem('Papas a la Francesa', 70, [], 70, 'papas')">+ Agregar</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- REFRESCOS MEXICANOS -->
-                <div class="product-card">
-                    <div class="card-img-container">
-                        <img src="https://images.unsplash.com/photo-1567103472667-6898f3a79cf2?auto=format&fit=crop&w=600&q=80" 
-                             onerror="this.src='https://images.unsplash.com/photo-1581636625402-29b2a704ef13?auto=format&fit=crop&w=600&q=80'" 
-                             alt="Refrescos Mexicanos">
-                        <div class="price-badge">$25.00</div>
-                    </div>
-                    <div class="card-content">
-                        <h3>Refresco 600ml</h3>
-                        <p>Variedad de refrescos mexicanos bien fríos (Jarritos, Coca-Cola, Sidral Mundet, Sprite).</p>
-                        <div class="card-actions">
-                            <button class="btn-customize" onclick="openModifyModal('Refresco 600ml', 25, 'refresco')">Modificar</button>
-                            <button class="btn-add" onclick="addItem('Refresco 600ml', 25, [], 25, 'refresco')">+ Agregar</button>
-                        </div>
-                    </div>
-                </div>
-
+            <!-- INFORMACIÓN DE VERDURA Y ADEREZOS DE LA LONA -->
+            <div class="menu-ingredients-banner">
+                🥗 <strong>Verdura incluida:</strong> Lechuga, jitomate, cebolla con habanero y picante.<br>
+                🍯 <strong>Aderezos incluidos:</strong> Mayonesa, cátsup, mostaza y BBQ. <em>(Puedes personalizarlos o añadir extras de $10 y carne extra de $15 en el botón <strong>Modificar</strong>).</em>
             </div>
+
+            <!-- CONTENEDOR DINÁMICO DE PRODUCTOS DEL MENÚ -->
+            <div id="products-list-container" class="products-grid"></div>
         </div>
 
-        <!-- 3. SECCIÓN ÓRDENES (CON BOTONES PARA COMPRIMIR/DESPLEGAR DÍAS Y SECCIONES) -->
+        <!-- 3. SECCIÓN ÓRDENES (PROTEGIDA CON PIN 2684) -->
         <div id="section-ordenes" class="view-section">
             
-            <!-- BARRA DE CONTROL KDS (SONIDO Y BOTÓN DE COMPRIMIR/DESPLEGAR TODO) -->
             <div class="orders-toolbar">
                 <span style="font-size: 0.82rem; color: #94a3b8;">🔄 Sincronización en tiempo real activa (cada 4s)</span>
                 <div style="display: flex; gap: 8px; flex-wrap: wrap;">
@@ -1692,6 +1803,31 @@
             </div>
         </div>
 
+        <!-- 4. NUEVA SECCIÓN INVENTARIO Y MATERIA PRIMA (PROTEGIDA CON PIN 2684) -->
+        <div id="section-inventario" class="view-section">
+            <div class="orders-toolbar">
+                <div>
+                    <strong style="color: #facc15; font-size: 1rem;">📦 Control de Inventario y Materia Prima</strong>
+                    <p style="color: #94a3b8; font-size: 0.8rem;">
+                        Los ingredientes se descuentan automáticamente con cada venta según la receta y los extras de cada producto.
+                    </p>
+                </div>
+                <button class="btn-day-summary-ticket" onclick="restablecerInventarioBase()">
+                    🔄 Restablecer Stock Inicial
+                </button>
+            </div>
+
+            <!-- ALERTA AUTOMÁTICA DE COMPRAS CUANDO UN INSUMO ESTÁ BAJO O AGOTADO -->
+            <div id="inventory-shopping-alert" class="inventory-alert-box all-good">
+                <!-- Se actualiza dinámicamente -->
+            </div>
+
+            <!-- TARJETAS DE INGREDIENTES Y MATERIA PRIMA -->
+            <div id="inventory-items-container" class="inventory-grid">
+                <!-- Se genera dinámicamente con el stock disponible y botones para agregar más -->
+            </div>
+        </div>
+
     </div>
 
     <!-- TICKET FLOTANTE DE PAGO -->
@@ -1750,11 +1886,9 @@
             <h3>Resumen y Pago de Orden</h3>
             <p style="color: #94a3b8; font-size: 0.85rem;">Revisa tus productos, modifícalos o elimínalos antes de pagar:</p>
 
-            <!-- 1. LISTA INTERACTIVA DE PRODUCTOS EN EL CARRITO -->
             <div class="cart-summary-title">🛒 Productos en tu carrito</div>
             <div id="checkout-cart-list" class="cart-summary-list"></div>
 
-            <!-- 2. DATOS DEL CLIENTE (NOMBRE OBLIGATORIO) Y ENTREGA (DELIVERY) -->
             <div class="cart-summary-title">👤 Datos del Cliente (Obligatorio *)</div>
             <div class="form-group">
                 <input type="text" id="input-customer-name" class="form-input" placeholder="* Nombre para la orden (Obligatorio)" required>
@@ -1769,7 +1903,6 @@
                 </div>
             </div>
 
-            <!-- 3. MÉTODO DE PAGO -->
             <div class="cart-summary-title">💳 Método de Pago</div>
             <div class="payment-methods">
                 <button class="pay-method-btn selected" onclick="selectPayMethod(this, 'Efectivo')">💵 Efectivo</button>
@@ -1778,7 +1911,6 @@
                 <button class="pay-method-btn" onclick="selectPayMethod(this, 'Cortesía')">🎫 Cortesía</button>
             </div>
 
-            <!-- 4. CALCULADORA DE CAMBIO (SOLO PARA EFECTIVO) -->
             <div id="cash-calculator-section" class="cash-calculator-box">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
                     <span style="font-size: 0.82rem; color: #cbd5e1;">💵 ¿Con cuánto paga el cliente?</span>
@@ -1803,11 +1935,11 @@
         </div>
     </div>
 
-    <!-- MODAL PARA MODIFICAR INGREDIENTES / SABORES (ENCIMA DEL CARRITO CON Z-INDEX 1250) -->
+    <!-- MODAL PARA MODIFICAR INGREDIENTES / EXTRAS / SABORES -->
     <div class="modal-overlay" id="modify-modal">
         <div class="modal-card">
             <h3 id="modify-modal-title">Modificar Producto</h3>
-            <p style="color: #94a3b8; font-size: 0.85rem;">Selecciona las modificaciones para tu producto:</p>
+            <p style="color: #94a3b8; font-size: 0.85rem;">Personaliza verduras, aderezos o agrega ingredientes extra:</p>
 
             <div id="modify-options-container" class="options-list"></div>
 
@@ -1821,12 +1953,10 @@
         </div>
     </div>
 
-    <!-- MODAL DE TICKET DIGITAL (ORDEN INDIVIDUAL O RESUMEN DEL DÍA) SIN DESCARGA AUTOMÁTICA -->
+    <!-- MODAL DE TICKET DIGITAL SIN DESCARGA AUTOMÁTICA -->
     <div class="modal-overlay" id="ticket-modal">
         <div class="modal-card" style="max-width: 430px;">
-            <div id="digital-receipt-content" class="receipt-paper">
-                <!-- Se llena al generar ticket de orden o resumen del día -->
-            </div>
+            <div id="digital-receipt-content" class="receipt-paper"></div>
 
             <div class="ticket-download-options-label">
                 👇 Selecciona en qué formato deseas descargar el ticket:
@@ -1854,7 +1984,7 @@
         <div class="modal-card" style="max-width: 360px; text-align: center;">
             <h3>🔒 Acceso de Personal</h3>
             <p style="color: #94a3b8; font-size: 0.85rem; margin-bottom: 15px;">
-                Ingresa el PIN de 4 dígitos para acceder al apartado de Órdenes o administrar el sistema.
+                Ingresa el PIN de 4 dígitos para acceder a Órdenes, Inventario o administrar el sistema.
             </p>
             <input type="password" id="input-staff-pin" class="form-input" maxlength="4" placeholder="••••" style="text-align: center; font-size: 1.5rem; letter-spacing: 8px; margin-bottom: 12px;">
             <button class="btn-enter-system" style="margin-top: 5px;" onclick="confirmStaffPin()">Desbloquear y Entrar</button>
@@ -1862,7 +1992,7 @@
         </div>
     </div>
 
-    <!-- SCRIPTS DE INTERACCIÓN Y CONEXIÓN A BASE DE DATOS (SUPABASE) -->
+    <!-- SCRIPTS DE INTERACCIÓN, MENÚ COMPLETO, INVENTARIO Y SUPABASE -->
     <script>
         // =========================================================================
         // CONFIGURACIÓN DE BASE DE DATOS (SUPABASE)
@@ -1879,20 +2009,18 @@
         let cartTotal = 0;
         let currentOrderType = 'Comer Aquí';
         let currentPayMethod = 'Efectivo';
+        let currentMenuFilter = 'todos';
 
-        // CONTADOR DE ORDEN INICIANDO EN 1
         let localOrderNum = 1;
         let pendingOrders = [];
         let deliveredOrders = [];
         let currentTicketFilename = 'Ticket_Panchiburguers';
 
-        // Control de sonido y seguimiento de cambios de estado para notificar a clientes
         let kdsSoundEnabled = true;
-        let orderStatusHistory = {}; // Guarda { [orderId]: estado } para detectar cambios
+        let orderStatusHistory = {};
         let initialLoadComplete = false;
         let clientAlertTimeout = null;
 
-        // Estado de secciones y días comprimidos/desplegados
         const collapsedSections = {
             'client-board': false,
             'pending-sec': false,
@@ -1907,26 +2035,263 @@
         let isStaffAuthorized = false;
         let pendingPinCallback = null;
 
-        // Producto temporal para el modal de "Modificar" y edición desde carrito
         let currentModifyingProduct = null;
         let editingCartIndex = null;
 
-        // Catálogo de opciones de modificación por tipo de producto
+        // =========================================================================
+        // 1. CATÁLOGO COMPLETO DEL MENÚ OFICIAL DE PANCHIBURGUERS + RECETA DE INSUMOS
+        // =========================================================================
+        const MENU_PRODUCTS = [
+            // --- HAMBURGUESAS ---
+            {
+                id: 'h_sencilla',
+                name: 'Hamburguesa Sencilla',
+                price: 65,
+                category: 'hamburguesa',
+                categoryLabel: '🍔 Hamburguesa',
+                desc: 'Carne de res, lechuga, jitomate, cebolla con habanero y aderezos (mayonesa, cátsup, mostaza y BBQ).',
+                img: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=600&q=80',
+                recipe: { pan_hamburguesa: 1, carne_res: 1, lechuga: 1, jitomate: 1, cebolla_habanero: 1, aderezos: 1 }
+            },
+            {
+                id: 'h_quesillo',
+                name: 'Hamburguesa Quesillo',
+                price: 70,
+                category: 'hamburguesa',
+                categoryLabel: '🍔 Hamburguesa',
+                desc: 'Carne de res con delicioso quesillo fundido, verdura completa y aderezos de la casa.',
+                img: 'https://images.unsplash.com/photo-1586190848861-99aa4a171e90?auto=format&fit=crop&w=600&q=80',
+                recipe: { pan_hamburguesa: 1, carne_res: 1, quesillo: 1, lechuga: 1, jitomate: 1, cebolla_habanero: 1, aderezos: 1 }
+            },
+            {
+                id: 'h_queso_amarillo',
+                name: 'Hamburguesa Queso Amarillo',
+                price: 70,
+                category: 'hamburguesa',
+                categoryLabel: '🍔 Hamburguesa',
+                desc: 'Carne de res con queso amarillo derretido, lechuga, jitomate, cebolla con habanero y aderezos.',
+                img: 'https://images.unsplash.com/photo-1572802419224-296b0aeee0d9?auto=format&fit=crop&w=600&q=80',
+                recipe: { pan_hamburguesa: 1, carne_res: 1, queso_amarillo: 1, lechuga: 1, jitomate: 1, cebolla_habanero: 1, aderezos: 1 }
+            },
+            {
+                id: 'h_tocino',
+                name: 'Hamburguesa Tocino',
+                price: 70,
+                category: 'hamburguesa',
+                categoryLabel: '🍔 Hamburguesa',
+                desc: 'Carne de res acompañada de tocino crujiente, verdura fresca y aderezos tradicionales.',
+                img: 'https://images.unsplash.com/photo-1553979459-d2229ba7433b?auto=format&fit=crop&w=600&q=80',
+                recipe: { pan_hamburguesa: 1, carne_res: 1, tocino: 1, lechuga: 1, jitomate: 1, cebolla_habanero: 1, aderezos: 1 }
+            },
+            {
+                id: 'h_salchicha',
+                name: 'Hamburguesa Salchicha',
+                price: 70,
+                category: 'hamburguesa',
+                categoryLabel: '🍔 Hamburguesa',
+                desc: 'Carne de res combinada con salchicha asada, lechuga, jitomate, cebolla con habanero y aderezos.',
+                img: 'https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?auto=format&fit=crop&w=600&q=80',
+                recipe: { pan_hamburguesa: 1, carne_res: 1, salchicha: 1, lechuga: 1, jitomate: 1, cebolla_habanero: 1, aderezos: 1 }
+            },
+            {
+                id: 'h_pina',
+                name: 'Hamburguesa Piña',
+                price: 70,
+                category: 'hamburguesa',
+                categoryLabel: '🍔 Hamburguesa',
+                desc: 'Carne de res con rebanada de piña asada al grill, verdura fresca y aderezos.',
+                img: 'https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=600&q=80',
+                recipe: { pan_hamburguesa: 1, carne_res: 1, pina: 1, lechuga: 1, jitomate: 1, cebolla_habanero: 1, aderezos: 1 }
+            },
+            {
+                id: 'h_especial',
+                name: 'Hamburguesa Especial',
+                price: 80,
+                category: 'hamburguesa',
+                categoryLabel: '🍔 Hamburguesa',
+                desc: 'Tocino, quesillo, queso amarillo, jamón, carne de res, verdura y aderezos de la casa.',
+                img: 'https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=600&q=80',
+                recipe: { pan_hamburguesa: 1, carne_res: 1, tocino: 1, quesillo: 1, queso_amarillo: 1, jamon: 1, lechuga: 1, jitomate: 1, cebolla_habanero: 1, aderezos: 1 }
+            },
+            {
+                id: 'h_hawaiana',
+                name: 'Hamburguesa Hawaiana',
+                price: 85,
+                category: 'hamburguesa',
+                categoryLabel: '🍔 Hamburguesa',
+                desc: 'Tocino, quesillo, queso amarillo, jamón, piña asada, carne de res, verdura y aderezos.',
+                img: 'https://images.unsplash.com/photo-1586190848861-99aa4a171e90?auto=format&fit=crop&w=600&q=80',
+                recipe: { pan_hamburguesa: 1, carne_res: 1, tocino: 1, quesillo: 1, queso_amarillo: 1, jamon: 1, pina: 1, lechuga: 1, jitomate: 1, cebolla_habanero: 1, aderezos: 1 }
+            },
+            {
+                id: 'h_3quesos',
+                name: 'Hamburguesa 3 Quesos',
+                price: 85,
+                category: 'hamburguesa',
+                categoryLabel: '🧀 Especialidad',
+                desc: 'Mezcla gratinada de quesos Cheddar, Mozzarella y Gouda sobre carne de res con verdura y aderezos.',
+                img: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=600&q=80',
+                recipe: { pan_hamburguesa: 1, carne_res: 1, mezcla_3_quesos: 1, lechuga: 1, jitomate: 1, cebolla_habanero: 1, aderezos: 1 }
+            },
+            {
+                id: 'h_mega',
+                name: 'Hamburguesa Mega ★',
+                price: 100,
+                category: 'hamburguesa',
+                categoryLabel: '⭐ Favorita',
+                desc: 'Doble carne, quesillo, tocino, queso amarillo, jamón, piña y doble salchicha.',
+                img: 'https://images.unsplash.com/photo-1553979459-d2229ba7433b?auto=format&fit=crop&w=600&q=80',
+                recipe: { pan_hamburguesa: 1, carne_res: 2, quesillo: 1, tocino: 1, queso_amarillo: 1, jamon: 1, pina: 1, salchicha: 2, lechuga: 1, jitomate: 1, cebolla_habanero: 1, aderezos: 1 }
+            },
+
+            // --- HOT DOGS ---
+            {
+                id: 'hd_orden3',
+                name: 'Orden de 3 Hot Dog Sencillos',
+                price: 65,
+                category: 'hotdog',
+                categoryLabel: '🌭 Promo 3x',
+                desc: 'Orden de 3 Hot Dogs sencillos con jitomate, cebolla con habanero, mayonesa, cátsup, mostaza y BBQ.',
+                img: 'https://images.unsplash.com/photo-1619740455993-9e612b1af08a?auto=format&fit=crop&w=600&q=80',
+                recipe: { pan_hotdog: 3, salchicha: 3, jitomate: 3, cebolla_habanero: 3, aderezos: 3 }
+            },
+            {
+                id: 'hd_sencillo',
+                name: 'Hot Dog Sencillo (c/u)',
+                price: 25,
+                category: 'hotdog',
+                categoryLabel: '🌭 Hot Dog',
+                desc: 'Hot Dog individual clásico con verdura (jitomate, cebolla con habanero) y aderezos.',
+                img: 'https://images.unsplash.com/photo-1619740455993-9e612b1af08a?auto=format&fit=crop&w=600&q=80',
+                recipe: { pan_hotdog: 1, salchicha: 1, jitomate: 1, cebolla_habanero: 1, aderezos: 1 }
+            },
+            {
+                id: 'hd_quesillo',
+                name: 'Hot Dog Quesillo',
+                price: 35,
+                category: 'hotdog',
+                categoryLabel: '🌭 Hot Dog',
+                desc: 'Hot Dog con quesillo fundido, verdura fresca y aderezos de la casa.',
+                img: 'https://images.unsplash.com/photo-1619740455993-9e612b1af08a?auto=format&fit=crop&w=600&q=80',
+                recipe: { pan_hotdog: 1, salchicha: 1, quesillo: 1, jitomate: 1, cebolla_habanero: 1, aderezos: 1 }
+            },
+            {
+                id: 'hd_tocino',
+                name: 'Hot Dog Tocino',
+                price: 35,
+                category: 'hotdog',
+                categoryLabel: '🌭 Hot Dog',
+                desc: 'Salchicha envuelta en tocino crujiente con jitomate, cebolla con habanero y aderezos.',
+                img: 'https://images.unsplash.com/photo-1619740455993-9e612b1af08a?auto=format&fit=crop&w=600&q=80',
+                recipe: { pan_hotdog: 1, salchicha: 1, tocino: 1, jitomate: 1, cebolla_habanero: 1, aderezos: 1 }
+            },
+            {
+                id: 'hd_especial',
+                name: 'Hot Dog Especial',
+                price: 60,
+                category: 'hotdog',
+                categoryLabel: '🌭 Hot Dog Especial',
+                desc: 'Preparado con tocino, quesillo, queso amarillo, jamón, verdura y aderezos.',
+                img: 'https://images.unsplash.com/photo-1619740455993-9e612b1af08a?auto=format&fit=crop&w=600&q=80',
+                recipe: { pan_hotdog: 1, salchicha: 1, tocino: 1, quesillo: 1, queso_amarillo: 1, jamon: 1, jitomate: 1, cebolla_habanero: 1, aderezos: 1 }
+            },
+            {
+                id: 'hd_hawaiano',
+                name: 'Hot Dog Hawaiano',
+                price: 65,
+                category: 'hotdog',
+                categoryLabel: '🌭 Hot Dog Hawaiano',
+                desc: 'Tocino, quesillo, queso amarillo, jamón y piña asada con verdura y aderezos.',
+                img: 'https://images.unsplash.com/photo-1619740455993-9e612b1af08a?auto=format&fit=crop&w=600&q=80',
+                recipe: { pan_hotdog: 1, salchicha: 1, tocino: 1, quesillo: 1, queso_amarillo: 1, jamon: 1, pina: 1, jitomate: 1, cebolla_habanero: 1, aderezos: 1 }
+            },
+
+            // --- QUESADILLAS ---
+            {
+                id: 'q_sencilla',
+                name: 'Quesadilla',
+                price: 25,
+                category: 'quesadilla',
+                categoryLabel: '🧀 Quesadilla',
+                desc: 'Quesadilla tradicional con abundante quesillo fundido al comal.',
+                img: 'https://images.unsplash.com/photo-1618040996337-56904b7850b9?auto=format&fit=crop&w=600&q=80',
+                recipe: { tortilla_harina: 1, quesillo: 1 }
+            },
+
+            // --- COMPLEMENTOS Y BEBIDAS ---
+            {
+                id: 'c_papas',
+                name: 'Papas a la Francesa',
+                price: 70,
+                category: 'complemento',
+                categoryLabel: '🍟 Complemento',
+                desc: 'Crujientes papas a la francesa recién hechas con aderezos al gusto.',
+                img: 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=600&q=80',
+                recipe: { papas_francesa: 1, aderezos: 1 }
+            },
+            {
+                id: 'c_refresco',
+                name: 'Refresco 600ml',
+                price: 25,
+                category: 'complemento',
+                categoryLabel: '🥤 Bebida',
+                desc: 'Variedad de refrescos bien fríos (Jarritos, Coca-Cola, Sidral Mundet, Sprite).',
+                img: 'https://images.unsplash.com/photo-1567103472667-6898f3a79cf2?auto=format&fit=crop&w=600&q=80',
+                recipe: { refrescos: 1 }
+            }
+        ];
+
+        // =========================================================================
+        // 2. OPCIONES DE PERSONALIZACIÓN Y EXTRAS DEL MENÚ OFICIAL ($10 y $15)
+        // =========================================================================
         const MODIFICATION_OPTIONS = {
             hamburguesa: [
-                { label: 'Sin jitomate', price: 0 },
-                { label: 'Sin cebolla', price: 0 },
-                { label: 'Sin lechuga', price: 0 },
-                { label: 'Con chiles jalapeños', price: 0 },
-                { label: 'Extra queso fundido', price: 10 },
-                { label: 'Extra tocino crujiente', price: 15 },
-                { label: 'Extra carne', price: 25 }
+                { label: 'Sin lechuga', price: 0, skipIngredient: 'lechuga' },
+                { label: 'Sin jitomate', price: 0, skipIngredient: 'jitomate' },
+                { label: 'Sin cebolla con habanero', price: 0, skipIngredient: 'cebolla_habanero' },
+                { label: 'Sin picante', price: 0 },
+                { label: 'Sin mayonesa', price: 0 },
+                { label: 'Sin cátsup / mostaza', price: 0 },
+                { label: 'Con salsa BBQ', price: 0 },
+                { label: 'Carne extra', price: 15, addIngredient: 'carne_res' },
+                { label: 'Ingrediente extra: Quesillo', price: 10, addIngredient: 'quesillo' },
+                { label: 'Ingrediente extra: Queso amarillo', price: 10, addIngredient: 'queso_amarillo' },
+                { label: 'Ingrediente extra: Tocino', price: 10, addIngredient: 'tocino' },
+                { label: 'Ingrediente extra: Jamón', price: 10, addIngredient: 'jamon' },
+                { label: 'Ingrediente extra: Piña', price: 10, addIngredient: 'pina' },
+                { label: 'Ingrediente extra: Salchicha', price: 10, addIngredient: 'salchicha' },
+                { label: 'Ingrediente extra: 3 Quesos', price: 10, addIngredient: 'mezcla_3_quesos' }
+            ],
+            hotdog: [
+                { label: 'Sin jitomate', price: 0, skipIngredient: 'jitomate' },
+                { label: 'Sin cebolla con habanero', price: 0, skipIngredient: 'cebolla_habanero' },
+                { label: 'Sin picante', price: 0 },
+                { label: 'Sin mayonesa', price: 0 },
+                { label: 'Sin cátsup / mostaza', price: 0 },
+                { label: 'Con salsa BBQ', price: 0 },
+                { label: 'Ingrediente extra: Quesillo', price: 10, addIngredient: 'quesillo' },
+                { label: 'Ingrediente extra: Tocino', price: 10, addIngredient: 'tocino' },
+                { label: 'Ingrediente extra: Queso amarillo', price: 10, addIngredient: 'queso_amarillo' },
+                { label: 'Ingrediente extra: Jamón', price: 10, addIngredient: 'jamon' },
+                { label: 'Ingrediente extra: Piña', price: 10, addIngredient: 'pina' },
+                { label: 'Ingrediente extra: Salchicha', price: 10, addIngredient: 'salchicha' }
+            ],
+            quesadilla: [
+                { label: 'Con cebolla y habanero', price: 0, addIngredient: 'cebolla_habanero' },
+                { label: 'Con salsa BBQ', price: 0 },
+                { label: 'Carne extra', price: 15, addIngredient: 'carne_res' },
+                { label: 'Ingrediente extra: Tocino', price: 10, addIngredient: 'tocino' },
+                { label: 'Ingrediente extra: Jamón', price: 10, addIngredient: 'jamon' },
+                { label: 'Ingrediente extra: Piña', price: 10, addIngredient: 'pina' },
+                { label: 'Ingrediente extra: Quesillo', price: 10, addIngredient: 'quesillo' }
             ],
             papas: [
-                { label: 'Con cátsup y salsa picante', price: 0 },
+                { label: 'Con cátsup, mayonesa y BBQ', price: 0 },
                 { label: 'Sin sal', price: 0 },
-                { label: 'Con queso amarillo derretido', price: 15 },
-                { label: 'Con trocitos de tocino', price: 15 }
+                { label: 'Ingrediente extra: Queso amarillo', price: 10, addIngredient: 'queso_amarillo' },
+                { label: 'Ingrediente extra: Quesillo', price: 10, addIngredient: 'quesillo' },
+                { label: 'Ingrediente extra: Tocino', price: 10, addIngredient: 'tocino' },
+                { label: 'Ingrediente extra: Salchicha', price: 10, addIngredient: 'salchicha' }
             ],
             refresco: [
                 { label: 'Sabor: Jarritos Mandarina', price: 0 },
@@ -1937,6 +2302,255 @@
                 { label: 'Sabor: Sprite Limón', price: 0 }
             ]
         };
+
+        // =========================================================================
+        // 3. SISTEMA DE INVENTARIO DE MATERIA PRIMA E INGREDIENTES
+        // =========================================================================
+        const DEFAULT_INVENTORY = {
+            pan_hamburguesa: { name: 'Pan de Hamburguesa', icon: '🍔', stock: 45, minStock: 10, unit: 'piezas' },
+            carne_res:       { name: 'Carne de Res', icon: '🥩', stock: 50, minStock: 12, unit: 'piezas' },
+            pan_hotdog:      { name: 'Pan para Hot Dog', icon: '🌭', stock: 40, minStock: 10, unit: 'piezas' },
+            salchicha:       { name: 'Salchichas', icon: '🌭', stock: 50, minStock: 12, unit: 'piezas' },
+            quesillo:        { name: 'Quesillo', icon: '🧀', stock: 40, minStock: 10, unit: 'porciones' },
+            queso_amarillo:  { name: 'Queso Amarillo', icon: '🟨', stock: 40, minStock: 10, unit: 'rebanadas' },
+            mezcla_3_quesos: { name: 'Mezcla 3 Quesos (Cheddar, Mozzarella, Gouda)', icon: '🧀', stock: 25, minStock: 6, unit: 'porciones' },
+            tocino:          { name: 'Tocino', icon: '🥓', stock: 40, minStock: 10, unit: 'porciones' },
+            jamon:           { name: 'Jamón', icon: '🍖', stock: 40, minStock: 10, unit: 'rebanadas' },
+            pina:            { name: 'Piña en Rebanadas', icon: '🍍', stock: 30, minStock: 8, unit: 'rebanadas' },
+            tortilla_harina: { name: 'Tortillas para Quesadilla', icon: '🫓', stock: 30, minStock: 8, unit: 'piezas' },
+            papas_francesa:  { name: 'Papas a la Francesa', icon: '🍟', stock: 30, minStock: 8, unit: 'órdenes' },
+            refrescos:       { name: 'Refrescos 600ml', icon: '🥤', stock: 36, minStock: 8, unit: 'botellas' },
+            lechuga:         { name: 'Lechuga Fresca', icon: '🥬', stock: 50, minStock: 10, unit: 'porciones' },
+            jitomate:        { name: 'Jitomate', icon: '🍅', stock: 50, minStock: 10, unit: 'porciones' },
+            cebolla_habanero:{ name: 'Cebolla con Habanero y Picante', icon: '🌶️', stock: 50, minStock: 10, unit: 'porciones' },
+            aderezos:        { name: 'Aderezos (Mayonesa, Cátsup, Mostaza y BBQ)', icon: '🍯', stock: 60, minStock: 12, unit: 'porciones' }
+        };
+
+        let inventoryData = cargarInventarioLocal();
+
+        function cargarInventarioLocal() {
+            try {
+                const saved = localStorage.getItem('panchiburguers_inventory_v1');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    return { ... structuredClone(DEFAULT_INVENTORY), ...parsed };
+                }
+            } catch (e) {
+                console.error('Error al leer inventario:', e);
+            }
+            return JSON.parse(JSON.stringify(DEFAULT_INVENTORY));
+        }
+
+        function guardarInventarioLocal() {
+            try {
+                localStorage.setItem('panchiburguers_inventory_v1', JSON.stringify(inventoryData));
+            } catch (e) {
+                console.error('Error al guardar inventario:', e);
+            }
+        }
+
+        // Descontar automáticamente del inventario cada producto vendido y sus extras
+        function descontarInventarioPorOrden(itemsVendidos) {
+            const allModOpts = Object.values(MODIFICATION_OPTIONS).flat();
+
+            itemsVendidos.forEach(item => {
+                const prodDef = MENU_PRODUCTS.find(p => p.id === item.productId || p.name === item.name);
+                const mods = item.modifiers || [];
+
+                if (prodDef && prodDef.recipe) {
+                    Object.keys(prodDef.recipe).forEach(insumoKey => {
+                        // Revisar si el cliente pidió "Sin lechuga", "Sin jitomate", etc.
+                        const skipped = mods.some(mLabel => {
+                            const foundOpt = allModOpts.find(o => o.label === mLabel && o.skipIngredient === insumoKey);
+                            return Boolean(foundOpt);
+                        });
+
+                        if (!skipped && inventoryData[insumoKey]) {
+                            const qtyUsed = prodDef.recipe[insumoKey];
+                            inventoryData[insumoKey].stock = Math.max(0, inventoryData[insumoKey].stock - qtyUsed);
+                        }
+                    });
+                }
+
+                // Descontar ingredientes extra agregados ("Carne extra", "Ingrediente extra: Tocino", etc.)
+                mods.forEach(mLabel => {
+                    const extraOpt = allModOpts.find(o => o.label === mLabel && o.addIngredient);
+                    if (extraOpt && inventoryData[extraOpt.addIngredient]) {
+                        inventoryData[extraOpt.addIngredient].stock = Math.max(0, inventoryData[extraOpt.addIngredient].stock - 1);
+                    }
+                });
+            });
+
+            guardarInventarioLocal();
+            renderInventorySection();
+        }
+
+        function agregarStockInsumo(insumoKey, customAmount = null) {
+            if (!inventoryData[insumoKey]) return;
+            let amount = customAmount;
+
+            if (amount === null) {
+                const inputEl = document.getElementById(`inv-input-${insumoKey}`);
+                amount = parseInt(inputEl ? inputEl.value : 0, 10);
+            }
+
+            if (isNaN(amount) || amount === 0) {
+                alert('Ingresa una cantidad válida para sumar al inventario.');
+                return;
+            }
+
+            inventoryData[insumoKey].stock = Math.max(0, inventoryData[insumoKey].stock + amount);
+            guardarInventarioLocal();
+            renderInventorySection();
+            showToastNotification(`📦 ${inventoryData[insumoKey].name}: Stock actualizado a ${inventoryData[insumoKey].stock} ${inventoryData[insumoKey].unit}`);
+        }
+
+        function restablecerInventarioBase() {
+            if (confirm('¿Deseas restablecer todas las existencias del inventario a sus valores iniciales?')) {
+                inventoryData = JSON.parse(JSON.stringify(DEFAULT_INVENTORY));
+                guardarInventarioLocal();
+                renderInventorySection();
+                showToastNotification('📦 Inventario restablecido al stock inicial');
+            }
+        }
+
+        function renderInventorySection() {
+            const container = document.getElementById('inventory-items-container');
+            const alertBox = document.getElementById('inventory-shopping-alert');
+            if (!container || !alertBox) return;
+
+            const lowItems = [];
+            const emptyItems = [];
+
+            const cardsHtml = Object.keys(inventoryData).map(key => {
+                const item = inventoryData[key];
+                const isOut = item.stock <= 0;
+                const isLow = !isOut && item.stock <= item.minStock;
+
+                if (isOut) emptyItems.push(item.name);
+                else if (isLow) lowItems.push(`${item.name} (${item.stock} ${item.unit})`);
+
+                let cardClass = '';
+                let badgeHtml = `<span class="inv-status-badge ok">✅ Suficiente</span>`;
+                let barColor = '#22c55e';
+
+                if (isOut) {
+                    cardClass = 'out-of-stock';
+                    badgeHtml = `<span class="inv-status-badge empty">🚨 Agotado (Comprar)</span>`;
+                    barColor = '#ef4444';
+                } else if (isLow) {
+                    cardClass = 'low-stock';
+                    badgeHtml = `<span class="inv-status-badge low">⚠️ Comprar pronto</span>`;
+                    barColor = '#f59e0b';
+                }
+
+                const maxRef = Math.max(item.minStock * 4, item.stock, 1);
+                const pct = Math.min(100, Math.round((item.stock / maxRef) * 100));
+
+                return `
+                    <div class="inventory-card ${cardClass}">
+                        <div>
+                            <div class="inv-card-top">
+                                <div>
+                                    <strong>${item.icon} ${item.name}</strong>
+                                    <small>Mínimo recomendado: ${item.minStock} ${item.unit}</small>
+                                </div>
+                                ${badgeHtml}
+                            </div>
+                            <div style="margin-top: 8px; display:flex; justify-content:space-between; align-items:baseline;">
+                                <span style="font-size: 0.78rem; color:#cbd5e1;">Disponible:</span>
+                                <span class="inv-stock-number">${item.stock} <small style="font-size:0.75rem; font-weight:600; color:#94a3b8;">${item.unit}</small></span>
+                            </div>
+                            <div class="inv-progress-bg">
+                                <div class="inv-progress-fill" style="width:${pct}%; background:${barColor};"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 4px;">➕ Surtir compra / Ajustar:</div>
+                            <div class="inv-restock-controls">
+                                <input type="number" id="inv-input-${key}" class="inv-input-qty" value="10" min="1">
+                                <button class="btn-inv-add" onclick="agregarStockInsumo('${key}')">+ Agregar</button>
+                                <button class="btn-inv-quick" onclick="agregarStockInsumo('${key}', 5)">+5</button>
+                                <button class="btn-inv-quick" onclick="agregarStockInsumo('${key}', 20)">+20</button>
+                                <button class="btn-inv-minus" title="Descontar 1 por merma" onclick="agregarStockInsumo('${key}', -1)">-1</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = cardsHtml;
+
+            if (emptyItems.length === 0 && lowItems.length === 0) {
+                alertBox.className = 'inventory-alert-box all-good';
+                alertBox.innerHTML = `
+                    <strong style="color: #4ade80; font-size: 0.95rem;">✅ Todo el inventario está completo</strong>
+                    <p style="font-size: 0.82rem; color: #cbd5e1; margin-top: 3px;">
+                        Ningún ingrediente está por debajo del mínimo recomendado en este momento.
+                    </p>
+                `;
+            } else {
+                alertBox.className = 'inventory-alert-box';
+                let htmlMsg = `<strong style="color: #f87171; font-size: 0.95rem;">🛒 Aviso de Compras para el Puesto:</strong>`;
+                if (emptyItems.length > 0) {
+                    htmlMsg += `<p style="font-size: 0.83rem; color: #fca5a5; margin-top: 4px;">🚨 <strong>Agotados (Urgente):</strong> ${emptyItems.join(', ')}</p>`;
+                }
+                if (lowItems.length > 0) {
+                    htmlMsg += `<p style="font-size: 0.83rem; color: #fde68a; margin-top: 4px;">⚠️ <strong>Por terminarse (Comprar pronto):</strong> ${lowItems.join(', ')}</p>`;
+                }
+                alertBox.innerHTML = htmlMsg;
+            }
+        }
+
+        // =========================================================================
+        // RENDERIZAR CATÁLOGO DE PRODUCTOS DEL MENÚ Y FILTRO POR CATEGORÍA
+        // =========================================================================
+        function renderMenuCatalog() {
+            const container = document.getElementById('products-list-container');
+            if (!container) return;
+
+            const filtered = currentMenuFilter === 'todos'
+                ? MENU_PRODUCTS
+                : MENU_PRODUCTS.filter(p => p.category === currentMenuFilter);
+
+            container.innerHTML = filtered.map(prod => {
+                const modType = prod.id === 'c_papas'
+                    ? 'papas'
+                    : (prod.id === 'c_refresco' ? 'refresco' : prod.category);
+
+                const safeName = prod.name.replace(/'/g, "\\'");
+
+                return `
+                    <div class="product-card">
+                        <div>
+                            <div class="card-img-container">
+                                <img src="${prod.img}" alt="${prod.name}" onerror="this.src='https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=600&q=80'">
+                                <div class="category-tag-badge">${prod.categoryLabel}</div>
+                                <div class="price-badge">$${prod.price.toFixed(2)}</div>
+                            </div>
+                            <div class="card-content">
+                                <div>
+                                    <h3>${prod.name}</h3>
+                                    <p>${prod.desc}</p>
+                                </div>
+                                <div class="card-actions">
+                                    <button class="btn-customize" onclick="openModifyModal('${safeName}', ${prod.price}, '${modType}', null, '${prod.id}')">Modificar</button>
+                                    <button class="btn-add" onclick="addItem('${safeName}', ${prod.price}, [], ${prod.price}, '${modType}', '${prod.id}')">+ Agregar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function filterMenuCategory(category, btnEl) {
+            currentMenuFilter = category;
+            document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
+            if (btnEl) btnEl.classList.add('active');
+            renderMenuCatalog();
+        }
 
         // =========================================================================
         // FUNCIONES PARA COMPRIMIR Y DESPLEGAR SECCIONES Y DÍAS
@@ -2014,16 +2628,13 @@
                 const ctx = new AudioCtx();
 
                 if (type === 'prep') {
-                    // Doble tono suave para "En Preparación"
-                    playTone(ctx, 587.33, 0, 0.22);   // Re5
-                    playTone(ctx, 880.00, 0.20, 0.45); // La5
+                    playTone(ctx, 587.33, 0, 0.22);
+                    playTone(ctx, 880.00, 0.20, 0.45);
                 } else if (type === 'ready') {
-                    // Triple campana alegre para "¡Lista para Entregar!"
-                    playTone(ctx, 783.99, 0, 0.22);    // Sol5
-                    playTone(ctx, 987.77, 0.18, 0.22); // Si5
-                    playTone(ctx, 1318.51, 0.36, 0.65); // Mi6
+                    playTone(ctx, 783.99, 0, 0.22);
+                    playTone(ctx, 987.77, 0.18, 0.22);
+                    playTone(ctx, 1318.51, 0.36, 0.65);
                 } else {
-                    // Campana clásica Ding-Dong
                     playTone(ctx, 880.00, 0, 0.35);
                     playTone(ctx, 659.25, 0.22, 0.65);
                 }
@@ -2119,7 +2730,7 @@
         }
 
         // =========================================================================
-        // SISTEMA DE SEGURIDAD CON PIN (2684) AL ENTRAR A ÓRDENES O REINICIAR
+        // SISTEMA DE SEGURIDAD CON PIN (2684) PARA ÓRDENES, INVENTARIO Y REINICIO
         // =========================================================================
         function requireStaffPin(actionCallback) {
             if (isStaffAuthorized) {
@@ -2154,7 +2765,9 @@
             if (isStaffAuthorized) {
                 isStaffAuthorized = false;
                 updateStaffLockUI();
-                if (document.getElementById('section-ordenes').classList.contains('active')) {
+                const inProtectedView = document.getElementById('section-ordenes').classList.contains('active') ||
+                                        document.getElementById('section-inventario').classList.contains('active');
+                if (inProtectedView) {
                     activarVistaInterna('portada');
                 }
                 showToastNotification('🔒 Sesión de personal bloqueada');
@@ -2200,12 +2813,12 @@
         }
 
         // =========================================================================
-        // NAVEGACIÓN (OCULTA PERSONAL, REINICIAR, MENÚ Y ÓRDENES EN LA PORTADA)
+        // NAVEGACIÓN (PIDE PIN PARA ÓRDENES Y PARA INVENTARIO)
         // =========================================================================
         function switchView(viewId) {
-            if (viewId === 'ordenes') {
+            if (viewId === 'ordenes' || viewId === 'inventario') {
                 requireStaffPin(() => {
-                    activarVistaInterna('ordenes');
+                    activarVistaInterna(viewId);
                 });
                 return;
             }
@@ -2240,6 +2853,10 @@
 
             updateCartUI();
 
+            if (viewId === 'inventario') {
+                renderInventorySection();
+            }
+
             if (supabaseClient) {
                 cargarOrdenesDesdeBD();
             } else {
@@ -2264,9 +2881,9 @@
         // =========================================================================
         // MODAL DE MODIFICAR PRODUCTO
         // =========================================================================
-        function openModifyModal(name, basePrice, type, cartIndex = null) {
+        function openModifyModal(name, basePrice, type, cartIndex = null, productId = null) {
             editingCartIndex = cartIndex;
-            currentModifyingProduct = { name, basePrice, type };
+            currentModifyingProduct = { name, basePrice, type, productId };
             document.getElementById('modify-modal-title').innerText = `Modificar: ${name}`;
             
             const confirmBtn = document.getElementById('btn-confirm-modify');
@@ -2346,7 +2963,8 @@
                     finalPrice,
                     selectedMods,
                     currentModifyingProduct.basePrice,
-                    currentModifyingProduct.type
+                    currentModifyingProduct.type,
+                    currentModifyingProduct.productId
                 );
             }
 
@@ -2356,9 +2974,10 @@
         // =========================================================================
         // CARRITO Y CALCULADORA DE CAMBIO
         // =========================================================================
-        function addItem(name, price, modifiers = [], basePrice = price, type = 'hamburguesa') {
-            cartItems.push({ name, price, modifiers, basePrice, type });
+        function addItem(name, price, modifiers = [], basePrice = price, type = 'hamburguesa', productId = null) {
+            cartItems.push({ name, price, modifiers, basePrice, type, productId });
             recalculateCartTotal();
+            showToastNotification(`🛒 +1 ${name} agregado`);
         }
 
         function recalculateCartTotal() {
@@ -2391,7 +3010,7 @@
             listContainer.innerHTML = cartItems.map((item, idx) => {
                 const modsText = item.modifiers && item.modifiers.length > 0
                     ? `↳ ${item.modifiers.join(', ')}`
-                    : 'Sin modificaciones';
+                    : 'Con verdura y aderezos estándar';
 
                 return `
                     <div class="cart-summary-item">
@@ -2415,7 +3034,7 @@
         function editCartItem(index) {
             const item = cartItems[index];
             if (!item) return;
-            openModifyModal(item.name, item.basePrice || item.price, item.type || 'hamburguesa', index);
+            openModifyModal(item.name, item.basePrice || item.price, item.type || 'hamburguesa', index, item.productId || null);
         }
 
         function removeCartItem(index) {
@@ -2474,7 +3093,7 @@
         }
 
         // =========================================================================
-        // PROCESAR PAGO, GUARDAR EN SUPABASE Y MOSTRAR TICKET DIGITAL
+        // PROCESAR PAGO, DESCONTAR INVENTARIO Y GENERAR TICKET DIGITAL
         // =========================================================================
         async function processPayment() {
             if (cartItems.length === 0) {
@@ -2556,6 +3175,9 @@
                     console.error('Error de conexión con la BD:', err);
                 }
             }
+
+            // Descontar automáticamente del inventario los ingredientes utilizados
+            descontarInventarioPorOrden(cartItems);
 
             orderStatusHistory[nuevaOrden.id] = 'Pendiente';
             pendingOrders.unshift(nuevaOrden);
@@ -2928,7 +3550,6 @@
             return groups;
         }
 
-        // RENDERIZAR MONITOR DE ESTADO DE ÓRDENES EN VIVO PARA CLIENTES (EN MENÚ)
         function renderClientLiveBoard() {
             const prepListEl = document.getElementById('client-list-preparing');
             const readyListEl = document.getElementById('client-list-ready');
@@ -2988,7 +3609,6 @@
             const deliveredContainer = document.getElementById('delivered-orders-container');
             const revenueBanner = document.getElementById('delivered-total-revenue');
 
-            // 1. Renderizar Órdenes Por Entregar agrupadas por Día (con botón de Comprimir/Desplegar por día)
             if (pendingOrders.length === 0) {
                 pendingContainer.innerHTML = `<div class="empty-orders-msg">No hay órdenes pendientes por entregar en este momento.</div>`;
             } else {
@@ -3075,7 +3695,6 @@
                 pendingContainer.innerHTML = activeHtml;
             }
 
-            // 2. Calcular Corte de Caja y Renderizar Órdenes Entregadas agrupadas por Día
             let totalRevenue = 0;
             let sumEfectivo = 0;
             let sumTarjeta = 0;
@@ -3170,7 +3789,6 @@
             revenueBanner.innerText = `$${totalRevenue.toFixed(2)} MXN`;
         }
 
-        // CAMBIAR ESTADO A "EN PREPARACIÓN" O "LISTA PARA ENTREGAR" Y NOTIFICAR AL CLIENTE
         async function cambiarEstadoOrden(orderId, nuevoEstado) {
             const orden = pendingOrders.find(o => o.id === orderId);
             if (orden) {
@@ -3234,8 +3852,6 @@
                     return;
                 }
 
-                // Detectar si alguna orden cambió de estado ("En Preparación", "Lista para Entregar", "Entregada")
-                // o si llegó una orden nueva para avisar con sonido y mostrar número de orden + nombre
                 data.forEach(orden => {
                     const prevStatus = orderStatusHistory[orden.id];
 
@@ -3244,7 +3860,6 @@
                             playStatusSound('prep');
                             showToastNotification(`🔔 ¡Nueva Orden #${orden.id} recibida en cocina!`);
                         } else if (prevStatus && prevStatus !== orden.estado) {
-                            // Notificar en todos los dispositivos cuando cambia a En Preparación, Lista para Entregar o Entregada
                             mostrarAlertaEstadoCliente(orden, orden.estado);
                         }
                     }
@@ -3262,6 +3877,10 @@
                 console.error('Error al sincronizar órdenes:', err);
             }
         }
+
+        // Inicializar vistas al cargar la página
+        renderMenuCatalog();
+        renderInventorySection();
 
         if (supabaseClient) {
             cargarOrdenesDesdeBD();
