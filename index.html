@@ -195,6 +195,8 @@
             gap: 10px;
             padding: 15px 0;
             overflow-x: auto;
+            align-items: center;
+            justify-content: space-between;
         }
 
         .cat-chip {
@@ -205,6 +207,156 @@
             font-size: 0.85rem;
             font-weight: bold;
             white-space: nowrap;
+        }
+
+        /* TABLERO EN VIVO DE ESTADO DE ÓRDENES PARA CLIENTES (EN MENÚ) */
+        .client-live-board {
+            background: #111827;
+            border: 1px solid #334155;
+            border-left: 4px solid #38bdf8;
+            border-radius: 14px;
+            padding: 12px 15px;
+            margin-top: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.35);
+        }
+
+        .client-live-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .client-live-header strong {
+            color: #38bdf8;
+            font-size: 0.92rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .client-status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .client-status-col {
+            background: #0f172a;
+            border: 1px solid #1e293b;
+            border-radius: 10px;
+            padding: 10px;
+        }
+
+        .client-status-col h4 {
+            font-size: 0.8rem;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .client-order-pill {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 7px 10px;
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.84rem;
+        }
+
+        .client-order-pill.prep {
+            border-left: 4px solid #f97316;
+        }
+
+        .client-order-pill.ready {
+            border-left: 4px solid #22c55e;
+            background: rgba(34, 197, 94, 0.12);
+            animation: pulseReady 1.8s infinite;
+        }
+
+        .client-order-pill.done {
+            border-left: 4px solid #38bdf8;
+            opacity: 0.85;
+        }
+
+        @keyframes pulseReady {
+            0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.45); }
+            70% { box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+        }
+
+        /* BANNER EMERGENTE DE NOTIFICACIÓN PARA EL CLIENTE (CON NÚMERO Y NOMBRE) */
+        .client-status-alert-banner {
+            position: fixed;
+            top: 18px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 92%;
+            max-width: 460px;
+            background: #111827;
+            border: 2px solid #22c55e;
+            border-radius: 16px;
+            padding: 16px 18px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.75);
+            z-index: 3000;
+            display: none;
+            text-align: center;
+        }
+
+        .client-status-alert-banner.prep-style {
+            border-color: #f97316;
+        }
+
+        .client-status-alert-banner.ready-style {
+            border-color: #22c55e;
+        }
+
+        .client-status-alert-banner.delivered-style {
+            border-color: #38bdf8;
+        }
+
+        .alert-badge-title {
+            font-size: 0.82rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 4px;
+        }
+
+        .alert-order-number {
+            font-size: 1.55rem;
+            font-weight: 900;
+            color: #ffffff;
+            margin: 2px 0;
+        }
+
+        .alert-customer-name {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #facc15;
+            margin-bottom: 6px;
+        }
+
+        .alert-sub-msg {
+            font-size: 0.84rem;
+            color: #cbd5e1;
+            margin-bottom: 10px;
+        }
+
+        .btn-dismiss-alert {
+            background: #1e293b;
+            color: #ffffff;
+            border: 1px solid #475569;
+            padding: 6px 16px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            cursor: pointer;
         }
 
         /* CONTENEDOR PRINCIPAL */
@@ -224,7 +376,7 @@
             display: block;
         }
 
-        /* PORTADA MEJORADA CON DISEÑO ACORDE A LA PÁGINA */
+        /* PORTADA MEJORADA */
         .cover-box {
             background: radial-gradient(circle at top, #1e293b 0%, #0f172a 70%, #0b0f19 100%);
             border: 1px solid #334155;
@@ -455,7 +607,6 @@
             background: #111827;
             border-top: 2px solid #f97316;
             padding: 15px 20px;
-            padding-right: 185px;
             position: fixed;
             bottom: 0;
             left: 0;
@@ -463,7 +614,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 20px;
+            gap: 24px;
             box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
             z-index: 100;
         }
@@ -491,7 +642,7 @@
             box-shadow: 0 0 15px rgba(34, 197, 94, 0.4);
         }
 
-        /* MODALES CON JERARQUÍA DE CAPAS CORREGIDA */
+        /* MODALES CON JERARQUÍA DE CAPAS */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -878,7 +1029,7 @@
             box-shadow: 0 0 12px rgba(34, 197, 94, 0.35);
         }
 
-        /* SECCIÓN DE ÓRDENES Y AGRUPACIÓN POR DÍA */
+        /* SECCIÓN DE ÓRDENES, BOTONES DE COMPRIMIR/DESPLEGAR Y AGRUPACIÓN POR DÍA */
         .orders-toolbar {
             display: flex;
             justify-content: space-between;
@@ -898,7 +1049,7 @@
             color: #38bdf8;
             padding: 6px 12px;
             border-radius: 8px;
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             font-weight: bold;
             cursor: pointer;
         }
@@ -907,6 +1058,23 @@
             background: #1e293b;
             border-color: #475569;
             color: #94a3b8;
+        }
+
+        .btn-collapse-toggle {
+            background: #1e293b;
+            color: #cbd5e1;
+            border: 1px solid #475569;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-collapse-toggle:hover {
+            border-color: #38bdf8;
+            color: #38bdf8;
         }
 
         .day-group-header {
@@ -929,7 +1097,7 @@
         .day-header-right {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
         }
 
@@ -949,6 +1117,12 @@
         .btn-day-summary-ticket:hover {
             transform: translateY(-1px);
             background: #ea580c;
+        }
+
+        .day-orders-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
 
         /* PANEL DE CORTE DE CAJA DESGLOSADO */
@@ -991,7 +1165,7 @@
         .orders-section-title {
             color: #38bdf8;
             margin: 15px 0 8px 0;
-            font-size: 1.2rem;
+            font-size: 1.15rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -1020,6 +1194,11 @@
         .kds-card.preparing {
             border-left-color: #f97316;
             background: linear-gradient(135deg, #1e293b 0%, rgba(249, 115, 22, 0.08) 100%);
+        }
+
+        .kds-card.ready-pickup {
+            border-left-color: #22c55e;
+            background: linear-gradient(135deg, #1e293b 0%, rgba(34, 197, 94, 0.12) 100%);
         }
 
         .kds-card.delivered {
@@ -1060,16 +1239,22 @@
             border: 1px solid #f97316;
         }
 
+        .status-pill-badge.ready {
+            background: rgba(34, 197, 94, 0.2);
+            color: #4ade80;
+            border: 1px solid #22c55e;
+        }
+
         .customer-badge {
             background: rgba(249, 115, 22, 0.15);
             color: #fdba74;
             border: 1px solid rgba(249, 115, 22, 0.35);
             padding: 4px 10px;
             border-radius: 8px;
-            font-size: 0.82rem;
+            font-size: 0.85rem;
             margin-bottom: 8px;
             display: inline-block;
-            font-weight: 600;
+            font-weight: 700;
         }
 
         .order-cost-tag {
@@ -1105,13 +1290,31 @@
             border-radius: 8px;
             font-weight: bold;
             cursor: pointer;
+            font-size: 0.82rem;
         }
 
         .btn-preparing.active-prep {
             background: rgba(249, 115, 22, 0.2);
             color: #fb923c;
             border: 1px solid #f97316;
-            cursor: default;
+        }
+
+        .btn-ready-pickup {
+            background: #eab308;
+            color: #0b0f19;
+            border: none;
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: 800;
+            cursor: pointer;
+            font-size: 0.82rem;
+        }
+
+        .btn-ready-pickup.active-ready {
+            background: rgba(34, 197, 94, 0.22);
+            color: #4ade80;
+            border: 1px solid #22c55e;
         }
 
         .btn-dispatch {
@@ -1121,8 +1324,9 @@
             flex: 1;
             padding: 10px;
             border-radius: 8px;
-            font-weight: bold;
+            font-weight: 800;
             cursor: pointer;
+            font-size: 0.82rem;
         }
 
         .btn-order-ticket {
@@ -1134,6 +1338,7 @@
             border-radius: 8px;
             font-weight: bold;
             cursor: pointer;
+            font-size: 0.82rem;
         }
 
         .btn-order-ticket:hover {
@@ -1153,7 +1358,7 @@
         /* NOTIFICACIÓN FLOTANTE (TOAST) */
         .toast-alert {
             position: fixed;
-            top: 20px;
+            bottom: 95px;
             right: 20px;
             background: #22c55e;
             color: #0b0f19;
@@ -1168,8 +1373,17 @@
 </head>
 <body>
 
-    <!-- NOTIFICACIÓN FLOTANTE -->
-    <div id="toast-notification" class="toast-alert">🔔 ¡Nueva orden recibida en cocina!</div>
+    <!-- BANNER SONORO PARA CLIENTES CUANDO SU ORDEN CAMBIA DE ESTADO -->
+    <div id="client-status-banner" class="client-status-alert-banner">
+        <div id="client-alert-badge" class="alert-badge-title">🔔 ACTUALIZACIÓN DE ORDEN</div>
+        <div id="client-alert-order" class="alert-order-number">ORDEN #1</div>
+        <div id="client-alert-name" class="alert-customer-name">👤 Cliente</div>
+        <div id="client-alert-msg" class="alert-sub-msg">Tu pedido está listo para recoger en mostrador.</div>
+        <button class="btn-dismiss-alert" onclick="closeClientStatusBanner()">Entendido</button>
+    </div>
+
+    <!-- NOTIFICACIÓN FLOTANTE SECUNDARIA -->
+    <div id="toast-notification" class="toast-alert">🔔 ¡Actualización en el sistema!</div>
 
     <!-- BARRA SUPERIOR DE MARCA (PERSONAL Y REINICIO OCULTOS EN PORTADA) -->
     <header class="top-brand-bar">
@@ -1209,7 +1423,7 @@
 
     <div class="container">
 
-        <!-- 1. SECCIÓN PORTADA CON DISEÑO MEJORADO -->
+        <!-- 1. SECCIÓN PORTADA -->
         <div id="section-portada" class="view-section active">
             <div class="cover-box">
                 <div class="fes-badge">🎓 FES CUAUTITLÁN · UNAM</div>
@@ -1219,7 +1433,7 @@
 
                 <div class="welcome-banner-card">
                     <p>Bienvenido a Panchiburguers, ingresa para realizar y administrar tu pedido</p>
-                    <span>Selecciona tus ingredientes al gusto, elige tu modalidad de entrega y descarga tu comprobante digital al instante.</span>
+                    <span>Recibe notificaciones sonoras en tiempo real en tu celular cuando tu orden esté en preparación o lista para recoger.</span>
                 </div>
 
                 <div class="welcome-features-grid">
@@ -1229,14 +1443,14 @@
                         <small>Modifica ingredientes y sabores a tu gusto</small>
                     </div>
                     <div class="feature-mini-card">
-                        <span class="f-icon">📄</span>
-                        <strong>Tickets en PDF o Imagen</strong>
-                        <small>Descarga comprobantes de orden y cortes del día</small>
+                        <span class="f-icon">🔔</span>
+                        <strong>Aviso al Cliente en Vivo</strong>
+                        <small>Alerta sonora con tu # de orden y nombre</small>
                     </div>
                     <div class="feature-mini-card">
-                        <span class="f-icon">🔥</span>
-                        <strong>Cocina en Tiempo Real</strong>
-                        <small>Seguimiento por día y estado de preparación</small>
+                        <span class="f-icon">📄</span>
+                        <strong>Tickets en PDF o Imagen</strong>
+                        <small>Descarga comprobantes y cortes por día</small>
                     </div>
                 </div>
 
@@ -1246,8 +1460,44 @@
             </div>
         </div>
 
-        <!-- 2. SECCIÓN MENÚ -->
+        <!-- 2. SECCIÓN MENÚ (INCLUYE MONITOR DE ÓRDENES EN VIVO PARA CLIENTES) -->
         <div id="section-kiosco" class="view-section">
+
+            <!-- PANTALLA EN VIVO PARA QUE EL CLIENTE VEA EL ESTADO DE SU ORDEN DESDE SU DISPOSITIVO -->
+            <div class="client-live-board">
+                <div class="client-live-header">
+                    <strong>📡 Estado de Órdenes en Tiempo Real (Clientes)</strong>
+                    <div style="display: flex; gap: 6px;">
+                        <button id="btn-client-sound" class="btn-sound-toggle" onclick="toggleKdsSound()">🔔 Sonido: Activado</button>
+                        <button id="btn-toggle-client-board" class="btn-collapse-toggle" onclick="toggleSectionCollapse('client-board')">🔽 Comprimir</button>
+                    </div>
+                </div>
+                <div id="client-board-body">
+                    <p style="font-size: 0.78rem; color: #94a3b8; margin-top: 4px;">
+                        Aquí puedes ver el avance de tu pedido por <strong>Número de Orden</strong> y <strong>Nombre</strong>. Tu dispositivo sonará cuando cambie de estado:
+                    </p>
+                    <div class="client-status-grid">
+                        <div class="client-status-col">
+                            <h4 style="color: #fb923c;">👨‍🍳 En Preparación</h4>
+                            <div id="client-list-preparing">
+                                <small style="color: #64748b;">Sin órdenes en cocina</small>
+                            </div>
+                        </div>
+                        <div class="client-status-col">
+                            <h4 style="color: #4ade80;">🛎️ ¡Listas para Recoger!</h4>
+                            <div id="client-list-ready">
+                                <small style="color: #64748b;">Ninguna orden lista aún</small>
+                            </div>
+                        </div>
+                        <div class="client-status-col">
+                            <h4 style="color: #38bdf8;">✅ Recién Entregadas</h4>
+                            <div id="client-list-delivered">
+                                <small style="color: #64748b;">Sin entregas recientes</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             
             <!-- PESTAÑA UNIFICADA: ARMAR ORDEN -->
             <div class="categories-scroll">
@@ -1353,70 +1603,92 @@
             </div>
         </div>
 
-        <!-- 3. SECCIÓN ÓRDENES (PROTEGIDA CON PIN 2684 Y DIVIDIDA POR DÍA) -->
+        <!-- 3. SECCIÓN ÓRDENES (CON BOTONES PARA COMPRIMIR/DESPLEGAR DÍAS Y SECCIONES) -->
         <div id="section-ordenes" class="view-section">
             
-            <!-- BARRA DE CONTROL KDS (SONIDO Y SINCRONIZACIÓN) -->
+            <!-- BARRA DE CONTROL KDS (SONIDO Y BOTÓN DE COMPRIMIR/DESPLEGAR TODO) -->
             <div class="orders-toolbar">
-                <span style="font-size: 0.82rem; color: #94a3b8;">🔄 Sincronización automática activa (cada 5s)</span>
+                <span style="font-size: 0.82rem; color: #94a3b8;">🔄 Sincronización en tiempo real activa (cada 4s)</span>
                 <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <button class="btn-collapse-toggle" onclick="toggleAllOrdersCollapse()">
+                        📂 Comprimir / Desplegar Todo
+                    </button>
                     <button id="btn-sound-kds" class="btn-sound-toggle" onclick="toggleKdsSound()">🔔 Sonido: Activado</button>
-                    <button class="btn-sound-toggle" onclick="playKitchenBell()">🔊 Probar Campana</button>
+                    <button class="btn-sound-toggle" onclick="playStatusSound('ready')">🔊 Probar Sonido</button>
                 </div>
             </div>
 
+            <!-- SECCIÓN A: ÓRDENES POR ENTREGAR / ACTIVAS -->
             <div class="orders-section-title">
-                <span>🔥 Órdenes Activas (Pendientes y En Preparación)</span>
-            </div>
-            <p style="color: #94a3b8; font-size: 0.85rem; margin-bottom: 10px;">
-                Divididas por día. Presiona <strong>"En Preparación"</strong> al comenzar a cocinar y <strong>"Entregar Orden"</strong> al entregar al cliente.
-            </p>
-
-            <div class="kds-grid" id="pending-orders-container">
-                <div class="empty-orders-msg">No hay órdenes pendientes en este momento.</div>
-            </div>
-
-            <hr style="border: 0; border-top: 1px solid #1e293b; margin: 25px 0;">
-
-            <!-- CORTE DE CAJA DESGLOSADO POR MÉTODO DE PAGO CON BOTÓN DE RESUMEN GENERAL -->
-            <div class="orders-section-title">
-                <span style="color: #facc15;">📊 Corte de Caja y Resumen de Ventas</span>
-                <button class="btn-day-summary-ticket" onclick="abrirTicketResumenGeneral()">
-                    🧾 Descargar Ticket Resumen General
+                <span>🔥 Órdenes por Entregar (Pendientes, En Preparación y Listas)</span>
+                <button id="btn-toggle-pending-sec" class="btn-collapse-toggle" onclick="toggleSectionCollapse('pending-sec')">
+                    🔽 Comprimir Por Entregar
                 </button>
             </div>
-            <div class="cashout-grid">
-                <div class="cashout-card">
-                    <span>💵 Efectivo en Caja</span>
-                    <strong id="cashout-efectivo">$0.00</strong>
-                </div>
-                <div class="cashout-card">
-                    <span>💳 Tarjeta</span>
-                    <strong id="cashout-tarjeta">$0.00</strong>
-                </div>
-                <div class="cashout-card">
-                    <span>📱 Transfer QR</span>
-                    <strong id="cashout-qr">$0.00</strong>
-                </div>
-                <div class="cashout-card">
-                    <span>🎫 Cortesías</span>
-                    <strong id="cashout-cortesia">$0.00</strong>
-                </div>
-                <div class="cashout-card highlight">
-                    <span>💰 Total Vendido</span>
-                    <strong id="delivered-total-revenue">$0.00 MXN</strong>
+            <div id="pending-sec-body">
+                <p style="color: #94a3b8; font-size: 0.84rem; margin-bottom: 10px;">
+                    Presiona <strong>"En Preparación"</strong>, <strong>"Lista para Entregar"</strong> o <strong>"Entregar Orden"</strong> para notificar con sonido al dispositivo del cliente.
+                </p>
+                <div class="kds-grid" id="pending-orders-container">
+                    <div class="empty-orders-msg">No hay órdenes pendientes en este momento.</div>
                 </div>
             </div>
 
+            <hr style="border: 0; border-top: 1px solid #1e293b; margin: 22px 0;">
+
+            <!-- SECCIÓN B: CORTE DE CAJA Y RESUMEN -->
+            <div class="orders-section-title">
+                <span style="color: #facc15;">📊 Corte de Caja y Resumen de Ventas</span>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <button class="btn-day-summary-ticket" onclick="abrirTicketResumenGeneral()">
+                        🧾 Ticket Resumen General
+                    </button>
+                    <button id="btn-toggle-cashout-sec" class="btn-collapse-toggle" onclick="toggleSectionCollapse('cashout-sec')">
+                        🔽 Comprimir Corte
+                    </button>
+                </div>
+            </div>
+            <div id="cashout-sec-body">
+                <div class="cashout-grid">
+                    <div class="cashout-card">
+                        <span>💵 Efectivo en Caja</span>
+                        <strong id="cashout-efectivo">$0.00</strong>
+                    </div>
+                    <div class="cashout-card">
+                        <span>💳 Tarjeta</span>
+                        <strong id="cashout-tarjeta">$0.00</strong>
+                    </div>
+                    <div class="cashout-card">
+                        <span>📱 Transfer QR</span>
+                        <strong id="cashout-qr">$0.00</strong>
+                    </div>
+                    <div class="cashout-card">
+                        <span>🎫 Cortesías</span>
+                        <strong id="cashout-cortesia">$0.00</strong>
+                    </div>
+                    <div class="cashout-card highlight">
+                        <span>💰 Total Vendido</span>
+                        <strong id="delivered-total-revenue">$0.00 MXN</strong>
+                    </div>
+                </div>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid #1e293b; margin: 22px 0;">
+
+            <!-- SECCIÓN C: HISTORIAL DE ÓRDENES ENTREGADAS POR DÍA -->
             <div class="orders-section-title">
                 <span style="color: #22c55e;">✅ Historial de Órdenes Entregadas (Por Día)</span>
+                <button id="btn-toggle-delivered-sec" class="btn-collapse-toggle" onclick="toggleSectionCollapse('delivered-sec')">
+                    🔽 Comprimir Entregadas
+                </button>
             </div>
-            <p style="color: #94a3b8; font-size: 0.85rem; margin-bottom: 10px;">
-                Cada separador de fecha cuenta con su botón para visualizar y descargar el <strong>Ticket Resumen del Día</strong> en Imagen o PDF.
-            </p>
-
-            <div class="kds-grid" id="delivered-orders-container">
-                <div class="empty-orders-msg">Aún no se han entregado órdenes.</div>
+            <div id="delivered-sec-body">
+                <p style="color: #94a3b8; font-size: 0.84rem; margin-bottom: 10px;">
+                    Usa el botón de cada fecha para comprimir o desplegar las órdenes de ese día o descargar su Ticket Resumen.
+                </p>
+                <div class="kds-grid" id="delivered-orders-container">
+                    <div class="empty-orders-msg">Aún no se han entregado órdenes.</div>
+                </div>
             </div>
         </div>
 
@@ -1614,10 +1886,21 @@
         let deliveredOrders = [];
         let currentTicketFilename = 'Ticket_Panchiburguers';
 
-        // Control de sonido KDS y detección de nuevas órdenes
+        // Control de sonido y seguimiento de cambios de estado para notificar a clientes
         let kdsSoundEnabled = true;
-        let knownPendingOrderIds = new Set();
+        let orderStatusHistory = {}; // Guarda { [orderId]: estado } para detectar cambios
         let initialLoadComplete = false;
+        let clientAlertTimeout = null;
+
+        // Estado de secciones y días comprimidos/desplegados
+        const collapsedSections = {
+            'client-board': false,
+            'pending-sec': false,
+            'cashout-sec': false,
+            'delivered-sec': false
+        };
+        const collapsedDayGroups = new Set();
+        let allGroupsCollapsed = false;
 
         // PIN DE SEGURIDAD (2684)
         const STAFF_PIN = '2684';
@@ -1656,6 +1939,61 @@
         };
 
         // =========================================================================
+        // FUNCIONES PARA COMPRIMIR Y DESPLEGAR SECCIONES Y DÍAS
+        // =========================================================================
+        function toggleSectionCollapse(sectionKey) {
+            collapsedSections[sectionKey] = !collapsedSections[sectionKey];
+            const isCollapsed = collapsedSections[sectionKey];
+
+            const bodyEl = document.getElementById(`${sectionKey}-body`);
+            const btnEl = document.getElementById(`btn-toggle-${sectionKey}`);
+
+            if (bodyEl) {
+                bodyEl.style.display = isCollapsed ? 'none' : 'block';
+            }
+
+            if (btnEl) {
+                const labels = {
+                    'client-board': isCollapsed ? '▶️ Desplegar' : '🔽 Comprimir',
+                    'pending-sec': isCollapsed ? '▶️ Desplegar Por Entregar' : '🔽 Comprimir Por Entregar',
+                    'cashout-sec': isCollapsed ? '▶️ Desplegar Corte' : '🔽 Comprimir Corte',
+                    'delivered-sec': isCollapsed ? '▶️ Desplegar Entregadas' : '🔽 Comprimir Entregadas'
+                };
+                btnEl.innerText = labels[sectionKey] || (isCollapsed ? '▶️ Desplegar' : '🔽 Comprimir');
+            }
+        }
+
+        function toggleDayGroupCollapse(groupKey) {
+            if (collapsedDayGroups.has(groupKey)) {
+                collapsedDayGroups.delete(groupKey);
+            } else {
+                collapsedDayGroups.add(groupKey);
+            }
+            renderOrdersSection();
+        }
+
+        function toggleAllOrdersCollapse() {
+            allGroupsCollapsed = !allGroupsCollapsed;
+
+            ['pending-sec', 'cashout-sec', 'delivered-sec'].forEach(secKey => {
+                collapsedSections[secKey] = allGroupsCollapsed;
+                const bodyEl = document.getElementById(`${secKey}-body`);
+                const btnEl = document.getElementById(`btn-toggle-${secKey}`);
+                if (bodyEl) bodyEl.style.display = allGroupsCollapsed ? 'none' : 'block';
+                if (btnEl) {
+                    const labels = {
+                        'pending-sec': allGroupsCollapsed ? '▶️ Desplegar Por Entregar' : '🔽 Comprimir Por Entregar',
+                        'cashout-sec': allGroupsCollapsed ? '▶️ Desplegar Corte' : '🔽 Comprimir Corte',
+                        'delivered-sec': allGroupsCollapsed ? '▶️ Desplegar Entregadas' : '🔽 Comprimir Entregadas'
+                    };
+                    btnEl.innerText = labels[secKey];
+                }
+            });
+
+            renderOrdersSection();
+        }
+
+        // =========================================================================
         // MODAL DE SOPORTE
         // =========================================================================
         function openSupportModal() {
@@ -1667,51 +2005,108 @@
         }
 
         // =========================================================================
-        // SONIDO DE CAMPANA DE COCINA
+        // SONIDOS DIFERENCIADOS Y NOTIFICACIÓN AL CLIENTE EN PANTALLA
         // =========================================================================
-        function playKitchenBell() {
+        function playStatusSound(type = 'ready') {
             if (!kdsSoundEnabled) return;
             try {
                 const AudioCtx = window.AudioContext || window.webkitAudioContext;
                 const ctx = new AudioCtx();
 
-                const osc1 = ctx.createOscillator();
-                const gain1 = ctx.createGain();
-                osc1.type = 'sine';
-                osc1.frequency.setValueAtTime(880, ctx.currentTime);
-                gain1.gain.setValueAtTime(0.25, ctx.currentTime);
-                gain1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.45);
-                osc1.connect(gain1);
-                gain1.connect(ctx.destination);
-                osc1.start(ctx.currentTime);
-                osc1.stop(ctx.currentTime + 0.45);
-
-                const osc2 = ctx.createOscillator();
-                const gain2 = ctx.createGain();
-                osc2.type = 'sine';
-                osc2.frequency.setValueAtTime(659.25, ctx.currentTime + 0.22);
-                gain2.gain.setValueAtTime(0.25, ctx.currentTime + 0.22);
-                gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.9);
-                osc2.connect(gain2);
-                gain2.connect(ctx.destination);
-                osc2.start(ctx.currentTime + 0.22);
-                osc2.stop(ctx.currentTime + 0.9);
+                if (type === 'prep') {
+                    // Doble tono suave para "En Preparación"
+                    playTone(ctx, 587.33, 0, 0.22);   // Re5
+                    playTone(ctx, 880.00, 0.20, 0.45); // La5
+                } else if (type === 'ready') {
+                    // Triple campana alegre para "¡Lista para Entregar!"
+                    playTone(ctx, 783.99, 0, 0.22);    // Sol5
+                    playTone(ctx, 987.77, 0.18, 0.22); // Si5
+                    playTone(ctx, 1318.51, 0.36, 0.65); // Mi6
+                } else {
+                    // Campana clásica Ding-Dong
+                    playTone(ctx, 880.00, 0, 0.35);
+                    playTone(ctx, 659.25, 0.22, 0.65);
+                }
             } catch (e) {
                 console.log('Audio pendiente de interacción:', e);
             }
         }
 
+        function playTone(ctx, freq, startOffset, duration) {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, ctx.currentTime + startOffset);
+            gain.gain.setValueAtTime(0.28, ctx.currentTime + startOffset);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + startOffset + duration);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(ctx.currentTime + startOffset);
+            osc.stop(ctx.currentTime + startOffset + duration);
+        }
+
+        function mostrarAlertaEstadoCliente(orden, nuevoEstado) {
+            const meta = splitOrderTypeMeta(orden.tipo_orden);
+            const customerName = meta.customerName || 'Cliente';
+            const banner = document.getElementById('client-status-banner');
+            const badgeEl = document.getElementById('client-alert-badge');
+            const orderEl = document.getElementById('client-alert-order');
+            const nameEl = document.getElementById('client-alert-name');
+            const msgEl = document.getElementById('client-alert-msg');
+
+            banner.className = 'client-status-alert-banner';
+
+            if (nuevoEstado === 'En Preparación') {
+                banner.classList.add('prep-style');
+                badgeEl.style.color = '#fb923c';
+                badgeEl.innerText = '👨‍🍳 ¡TU ORDEN ESTÁ EN PREPARACIÓN!';
+                msgEl.innerText = 'La cocina ya está preparando tus alimentos.';
+                playStatusSound('prep');
+            } else if (nuevoEstado === 'Lista para Entregar') {
+                banner.classList.add('ready-style');
+                badgeEl.style.color = '#4ade80';
+                badgeEl.innerText = '🛎️ ¡ORDEN LISTA PARA RECOGER!';
+                msgEl.innerText = '¡Ya puedes pasar al mostrador a recoger tu pedido!';
+                playStatusSound('ready');
+            } else if (nuevoEstado === 'Entregada') {
+                banner.classList.add('delivered-style');
+                badgeEl.style.color = '#38bdf8';
+                badgeEl.innerText = '✅ ¡ORDEN ENTREGADA!';
+                msgEl.innerText = '¡Gracias por tu compra en PANCHIBURGUERS! Buen provecho.';
+                playStatusSound('delivered');
+            }
+
+            orderEl.innerText = `ORDEN #${orden.id}`;
+            nameEl.innerText = `👤 ${customerName}`;
+            banner.style.display = 'block';
+
+            if (clientAlertTimeout) clearTimeout(clientAlertTimeout);
+            clientAlertTimeout = setTimeout(() => {
+                banner.style.display = 'none';
+            }, 9000);
+        }
+
+        function closeClientStatusBanner() {
+            document.getElementById('client-status-banner').style.display = 'none';
+        }
+
         function toggleKdsSound() {
             kdsSoundEnabled = !kdsSoundEnabled;
-            const btn = document.getElementById('btn-sound-kds');
-            if (kdsSoundEnabled) {
-                btn.innerText = '🔔 Sonido: Activado';
-                btn.classList.remove('muted');
-                playKitchenBell();
-            } else {
-                btn.innerText = '🔕 Sonido: Silenciado';
-                btn.classList.add('muted');
-            }
+            const btns = [
+                document.getElementById('btn-sound-kds'),
+                document.getElementById('btn-client-sound')
+            ];
+            btns.forEach(btn => {
+                if (!btn) return;
+                if (kdsSoundEnabled) {
+                    btn.innerText = '🔔 Sonido: Activado';
+                    btn.classList.remove('muted');
+                } else {
+                    btn.innerText = '🔕 Sonido: Silenciado';
+                    btn.classList.add('muted');
+                }
+            });
+            if (kdsSoundEnabled) playStatusSound('ready');
         }
 
         function showToastNotification(text) {
@@ -1787,7 +2182,7 @@
                     localOrderNum = 1;
                     pendingOrders = [];
                     deliveredOrders = [];
-                    knownPendingOrderIds.clear();
+                    orderStatusHistory = {};
 
                     if (supabaseClient) {
                         try {
@@ -1798,6 +2193,7 @@
                     }
 
                     renderOrdersSection();
+                    renderClientLiveBoard();
                     showToastNotification('🔄 Contador y órdenes reiniciados');
                 }
             });
@@ -1823,13 +2219,11 @@
             document.getElementById('section-' + viewId).classList.add('active');
             document.getElementById('nav-btn-' + viewId).classList.add('active');
 
-            // Ocultar la barra de navegación (Portada / Menú / Órdenes) cuando estás en la Portada
             const navTabsBar = document.getElementById('nav-tabs-bar');
             if (navTabsBar) {
                 navTabsBar.style.display = (viewId === 'portada') ? 'none' : 'flex';
             }
 
-            // Ocultar también los botones de Personal (PIN) y Reiniciar Contador en la Portada
             const staffBtn = document.getElementById('btn-staff-status');
             const resetBtn = document.getElementById('btn-reset-orders');
             if (staffBtn) {
@@ -1839,21 +2233,18 @@
                 resetBtn.style.display = (viewId === 'portada') ? 'none' : 'inline-block';
             }
 
-            // Mostrar la barra de Comer Aquí / Para Llevar / Delivery SOLO en el Menú
             const orderTypeBar = document.getElementById('order-type-bar');
             if (orderTypeBar) {
                 orderTypeBar.style.display = (viewId === 'kiosco') ? 'flex' : 'none';
             }
 
-            // Actualizar visibilidad de la barra flotante del carrito
             updateCartUI();
 
-            if (viewId === 'ordenes') {
-                if (supabaseClient) {
-                    cargarOrdenesDesdeBD();
-                } else {
-                    renderOrdersSection();
-                }
+            if (supabaseClient) {
+                cargarOrdenesDesdeBD();
+            } else {
+                renderOrdersSection();
+                renderClientLiveBoard();
             }
         }
 
@@ -1871,7 +2262,7 @@
         }
 
         // =========================================================================
-        // MODAL DE MODIFICAR PRODUCTO (FUNCIONA EN MENÚ Y ENCIMA DEL CARRITO)
+        // MODAL DE MODIFICAR PRODUCTO
         // =========================================================================
         function openModifyModal(name, basePrice, type, cartIndex = null) {
             editingCartIndex = cartIndex;
@@ -2166,9 +2557,10 @@
                 }
             }
 
-            knownPendingOrderIds.add(nuevaOrden.id);
+            orderStatusHistory[nuevaOrden.id] = 'Pendiente';
             pendingOrders.unshift(nuevaOrden);
-            playKitchenBell();
+            playStatusSound('prep');
+            renderClientLiveBoard();
 
             const latency = Math.round(performance.now() - start);
 
@@ -2183,7 +2575,7 @@
             closeCheckoutModal();
         }
 
-        // MOSTRAR VISTA PREVIA DE TICKET DE ORDEN INDIVIDUAL (SIN DESCARGA AUTOMÁTICA)
+        // MOSTRAR VISTA PREVIA DE TICKET DE ORDEN INDIVIDUAL
         function mostrarTicketDigital(orden, customerName, deliveryLoc, deliveryPhone, cashReceived = null, cashChange = null, latency = null) {
             currentTicketFilename = `Ticket_Panchiburguers_Orden_${orden.id}`;
 
@@ -2265,7 +2657,6 @@
             document.getElementById('ticket-modal').style.display = 'flex';
         }
 
-        // ABRIR TICKET DE ORDEN SIN DESCARGAR AUTOMÁTICAMENTE
         function abrirTicketDesdeOrden(orderId) {
             const allOrders = [...pendingOrders, ...deliveredOrders];
             const orden = allOrders.find(o => o.id === orderId);
@@ -2275,7 +2666,7 @@
         }
 
         // =========================================================================
-        // TICKET DE RESUMEN DEL DÍA / CORTE GENERAL (PARA DESCARGAR EN IMG O PDF)
+        // TICKET DE RESUMEN DEL DÍA / CORTE GENERAL
         // =========================================================================
         function abrirTicketResumenPorDia(dayLabel) {
             const allOrders = [...deliveredOrders, ...pendingOrders];
@@ -2376,7 +2767,7 @@
                         <strong>${countEntregadas}</strong>
                     </div>
                     <div class="receipt-row" style="color: #ea580c;">
-                        <span>• Órdenes Activas / Cocina:</span>
+                        <span>• Órdenes por Entregar:</span>
                         <strong>${countActivas}</strong>
                     </div>
                 </div>
@@ -2424,7 +2815,6 @@
             document.getElementById('ticket-modal').style.display = 'flex';
         }
 
-        // DESCARGAR EL TICKET ACTUAL EN PDF (.PDF) CUANDO EL USUARIO LO SELECCIONA
         async function descargarTicketComoPDF() {
             const ticketElement = document.getElementById('digital-receipt-content');
             if (!ticketElement) return;
@@ -2459,7 +2849,6 @@
             }
         }
 
-        // DESCARGAR EL TICKET ACTUAL EN IMAGEN (.PNG) CUANDO EL USUARIO LO SELECCIONA
         async function descargarTicketComoImagen() {
             const ticketElement = document.getElementById('digital-receipt-content');
             if (!ticketElement) return;
@@ -2490,7 +2879,7 @@
         }
 
         // =========================================================================
-        // PANTALLA DE ÓRDENES AGRUPADAS POR DÍA Y CON BOTÓN DE RESUMEN POR FECHA
+        // MONITOR EN VIVO PARA CLIENTES + SECCIÓN DE ÓRDENES CON COMPRIMIR/DESPLEGAR
         // =========================================================================
         function splitOrderTypeMeta(rawTipoOrden) {
             if (!rawTipoOrden) {
@@ -2539,14 +2928,69 @@
             return groups;
         }
 
+        // RENDERIZAR MONITOR DE ESTADO DE ÓRDENES EN VIVO PARA CLIENTES (EN MENÚ)
+        function renderClientLiveBoard() {
+            const prepListEl = document.getElementById('client-list-preparing');
+            const readyListEl = document.getElementById('client-list-ready');
+            const doneListEl = document.getElementById('client-list-delivered');
+            if (!prepListEl || !readyListEl || !doneListEl) return;
+
+            const preparing = pendingOrders.filter(o => o.estado === 'En Preparación' || o.estado === 'Pendiente');
+            const ready = pendingOrders.filter(o => o.estado === 'Lista para Entregar');
+            const recentDone = deliveredOrders.slice(0, 5);
+
+            if (preparing.length === 0) {
+                prepListEl.innerHTML = `<small style="color: #64748b;">Sin órdenes en cocina</small>`;
+            } else {
+                prepListEl.innerHTML = preparing.map(o => {
+                    const meta = splitOrderTypeMeta(o.tipo_orden);
+                    const tag = o.estado === 'En Preparación' ? '🔥 Cocinando' : '⏳ En fila';
+                    return `
+                        <div class="client-order-pill prep">
+                            <div><strong>#${o.id}</strong> · 👤 ${meta.customerName}</div>
+                            <span style="font-size:0.75rem; color:#fb923c; font-weight:bold;">${tag}</span>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            if (ready.length === 0) {
+                readyListEl.innerHTML = `<small style="color: #64748b;">Ninguna orden lista aún</small>`;
+            } else {
+                readyListEl.innerHTML = ready.map(o => {
+                    const meta = splitOrderTypeMeta(o.tipo_orden);
+                    return `
+                        <div class="client-order-pill ready">
+                            <div><strong>#${o.id}</strong> · 👤 ${meta.customerName}</div>
+                            <span style="font-size:0.75rem; color:#4ade80; font-weight:900;">🛎️ ¡PASA A RECOGER!</span>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            if (recentDone.length === 0) {
+                doneListEl.innerHTML = `<small style="color: #64748b;">Sin entregas recientes</small>`;
+            } else {
+                doneListEl.innerHTML = recentDone.map(o => {
+                    const meta = splitOrderTypeMeta(o.tipo_orden);
+                    return `
+                        <div class="client-order-pill done">
+                            <div><strong>#${o.id}</strong> · 👤 ${meta.customerName}</div>
+                            <span style="font-size:0.75rem; color:#38bdf8; font-weight:bold;">✅ Entregada</span>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
         function renderOrdersSection() {
             const pendingContainer = document.getElementById('pending-orders-container');
             const deliveredContainer = document.getElementById('delivered-orders-container');
             const revenueBanner = document.getElementById('delivered-total-revenue');
 
-            // 1. Renderizar Órdenes Activas (Pendientes o En Preparación) agrupadas por Día
+            // 1. Renderizar Órdenes Por Entregar agrupadas por Día (con botón de Comprimir/Desplegar por día)
             if (pendingOrders.length === 0) {
-                pendingContainer.innerHTML = `<div class="empty-orders-msg">No hay órdenes activas en este momento.</div>`;
+                pendingContainer.innerHTML = `<div class="empty-orders-msg">No hay órdenes pendientes por entregar en este momento.</div>`;
             } else {
                 const groupedActive = groupOrdersByDay(pendingOrders);
                 let activeHtml = '';
@@ -2554,60 +2998,78 @@
                 Object.keys(groupedActive).forEach(dayLabel => {
                     const ordersOfDay = groupedActive[dayLabel];
                     const safeDayArg = dayLabel.replace(/'/g, "\\'");
+                    const groupKey = `active_${dayLabel}`;
+                    const isDayCollapsed = collapsedDayGroups.has(groupKey);
+                    const safeGroupKey = groupKey.replace(/'/g, "\\'");
 
                     activeHtml += `
                         <div class="day-group-header">
                             <span>${dayLabel}</span>
                             <div class="day-header-right">
-                                <span style="font-size: 0.78rem; color: #cbd5e1;">${ordersOfDay.length} activa(s)</span>
+                                <span style="font-size: 0.78rem; color: #cbd5e1;">${ordersOfDay.length} por entregar</span>
                                 <button class="btn-day-summary-ticket" onclick="abrirTicketResumenPorDia('${safeDayArg}')">
                                     🧾 Ticket Resumen del Día
+                                </button>
+                                <button class="btn-collapse-toggle" onclick="toggleDayGroupCollapse('${safeGroupKey}')">
+                                    ${isDayCollapsed ? '▶️ Desplegar Día' : '🔽 Comprimir Día'}
                                 </button>
                             </div>
                         </div>
                     `;
 
-                    activeHtml += ordersOfDay.map(orden => {
-                        const meta = splitOrderTypeMeta(orden.tipo_orden);
-                        const isPreparing = orden.estado === 'En Preparación';
-                        const timeStr = formatOrderTime(orden.created_at);
+                    if (!isDayCollapsed) {
+                        activeHtml += `<div class="day-orders-list">`;
+                        activeHtml += ordersOfDay.map(orden => {
+                            const meta = splitOrderTypeMeta(orden.tipo_orden);
+                            const isPreparing = orden.estado === 'En Preparación';
+                            const isReady = orden.estado === 'Lista para Entregar';
+                            const timeStr = formatOrderTime(orden.created_at);
 
-                        const statusBadge = isPreparing
-                            ? `<span class="status-pill-badge preparing">👨‍🍳 En Preparación</span>`
-                            : `<span class="status-pill-badge pending">⏳ Recibida</span>`;
+                            let statusBadge = `<span class="status-pill-badge pending">⏳ Recibida</span>`;
+                            if (isPreparing) statusBadge = `<span class="status-pill-badge preparing">👨‍🍳 En Preparación</span>`;
+                            if (isReady) statusBadge = `<span class="status-pill-badge ready">🛎️ Lista para Entregar</span>`;
 
-                        const prepButtonHtml = isPreparing
-                            ? `<button class="btn-preparing active-prep" disabled>🔥 Cocinando...</button>`
-                            : `<button class="btn-preparing" onclick="marcarEnPreparacion(${orden.id})">👨‍🍳 En Preparación</button>`;
+                            const cardClass = isReady ? 'ready-pickup' : (isPreparing ? 'preparing' : '');
 
-                        const itemsHtml = (orden.productos || []).map(item => `
-                            <p style="font-size: 0.9rem; color: #cbd5e1; margin-bottom: 2px;">• 1x ${item.name} ($${Number(item.price).toFixed(2)})</p>
-                            ${item.modifiers && item.modifiers.length > 0 ? `<div class="modifier-subtext">↳ ${item.modifiers.join(', ')}</div>` : ''}
-                        `).join('');
+                            const itemsHtml = (orden.productos || []).map(item => `
+                                <p style="font-size: 0.9rem; color: #cbd5e1; margin-bottom: 2px;">• 1x ${item.name} ($${Number(item.price).toFixed(2)})</p>
+                                ${item.modifiers && item.modifiers.length > 0 ? `<div class="modifier-subtext">↳ ${item.modifiers.join(', ')}</div>` : ''}
+                            `).join('');
 
-                        return `
-                            <div class="kds-card ${isPreparing ? 'preparing' : ''}">
-                                <div class="kds-head">
-                                    <div>
-                                        <span>Orden #${orden.id} (${meta.baseType})</span>
-                                        ${timeStr ? `<small style="color:#94a3b8; margin-left:6px;">🕒 ${timeStr}</small>` : ''}
+                            return `
+                                <div class="kds-card ${cardClass}">
+                                    <div class="kds-head">
+                                        <div>
+                                            <span>Orden #${orden.id} (${meta.baseType})</span>
+                                            ${timeStr ? `<small style="color:#94a3b8; margin-left:6px;">🕒 ${timeStr}</small>` : ''}
+                                        </div>
+                                        <div style="display:flex; align-items:center; gap:8px;">
+                                            ${statusBadge}
+                                            <span class="order-cost-tag">Costo: $${Number(orden.total).toFixed(2)} MXN</span>
+                                        </div>
                                     </div>
-                                    <div style="display:flex; align-items:center; gap:8px;">
-                                        ${statusBadge}
-                                        <span class="order-cost-tag">Costo: $${Number(orden.total).toFixed(2)} MXN</span>
+                                    ${meta.customerInfo ? `<div class="customer-badge">${meta.customerInfo}</div>` : ''}
+                                    <div style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 8px;">Pago: ${orden.metodo_pago || 'Efectivo'}</div>
+                                    ${itemsHtml}
+                                    <div class="kds-actions-row">
+                                        <button class="btn-preparing ${isPreparing ? 'active-prep' : ''}" onclick="cambiarEstadoOrden(${orden.id}, 'En Preparación')">
+                                            👨‍🍳 En Preparación
+                                        </button>
+                                        <button class="btn-ready-pickup ${isReady ? 'active-ready' : ''}" onclick="cambiarEstadoOrden(${orden.id}, 'Lista para Entregar')">
+                                            🛎️ Lista para Entregar
+                                        </button>
+                                        <button class="btn-dispatch" onclick="solicitarEntregarOrden(${orden.id})">
+                                            ✅ Entregar Orden
+                                        </button>
+                                        <button class="btn-order-ticket" onclick="abrirTicketDesdeOrden(${orden.id})">
+                                            🧾 Ticket
+                                        </button>
                                     </div>
                                 </div>
-                                ${meta.customerInfo ? `<div class="customer-badge">${meta.customerInfo}</div>` : ''}
-                                <div style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 8px;">Pago: ${orden.metodo_pago || 'Efectivo'}</div>
-                                ${itemsHtml}
-                                <div class="kds-actions-row">
-                                    ${prepButtonHtml}
-                                    <button class="btn-dispatch" onclick="solicitarEntregarOrden(${orden.id})">✅ Entregar Orden</button>
-                                    <button class="btn-order-ticket" onclick="abrirTicketDesdeOrden(${orden.id})">🧾 Ver / Descargar Ticket</button>
-                                </div>
-                            </div>
-                        `;
-                    }).join('');
+                            `;
+                        }).join('');
+                        activeHtml += `</div>`;
+                    }
                 });
 
                 pendingContainer.innerHTML = activeHtml;
@@ -2644,48 +3106,58 @@
                     const ordersOfDay = groupedDelivered[dayLabel];
                     const daySum = ordersOfDay.reduce((acc, o) => acc + (o.metodo_pago !== 'Cortesía' ? Number(o.total || 0) : 0), 0);
                     const safeDayArg = dayLabel.replace(/'/g, "\\'");
+                    const groupKey = `delivered_${dayLabel}`;
+                    const isDayCollapsed = collapsedDayGroups.has(groupKey);
+                    const safeGroupKey = groupKey.replace(/'/g, "\\'");
 
                     deliveredHtml += `
                         <div class="day-group-header">
                             <span>${dayLabel}</span>
                             <div class="day-header-right">
-                                <span style="font-size: 0.82rem; color: #22c55e;">Total del día: $${daySum.toFixed(2)} MXN</span>
+                                <span style="font-size: 0.82rem; color: #22c55e;">${ordersOfDay.length} entregada(s) · Total: $${daySum.toFixed(2)} MXN</span>
                                 <button class="btn-day-summary-ticket" onclick="abrirTicketResumenPorDia('${safeDayArg}')">
                                     🧾 Ticket Resumen del Día
+                                </button>
+                                <button class="btn-collapse-toggle" onclick="toggleDayGroupCollapse('${safeGroupKey}')">
+                                    ${isDayCollapsed ? '▶️ Desplegar Día' : '🔽 Comprimir Día'}
                                 </button>
                             </div>
                         </div>
                     `;
 
-                    deliveredHtml += ordersOfDay.map(orden => {
-                        const amount = Number(orden.total || 0);
-                        const method = orden.metodo_pago || 'Efectivo';
-                        const meta = splitOrderTypeMeta(orden.tipo_orden);
-                        const timeStr = formatOrderTime(orden.created_at);
+                    if (!isDayCollapsed) {
+                        deliveredHtml += `<div class="day-orders-list">`;
+                        deliveredHtml += ordersOfDay.map(orden => {
+                            const amount = Number(orden.total || 0);
+                            const method = orden.metodo_pago || 'Efectivo';
+                            const meta = splitOrderTypeMeta(orden.tipo_orden);
+                            const timeStr = formatOrderTime(orden.created_at);
 
-                        const itemsHtml = (orden.productos || []).map(item => `
-                            <p style="font-size: 0.88rem; color: #94a3b8; margin-bottom: 2px;">• 1x ${item.name}</p>
-                            ${item.modifiers && item.modifiers.length > 0 ? `<div class="modifier-subtext">↳ ${item.modifiers.join(', ')}</div>` : ''}
-                        `).join('');
+                            const itemsHtml = (orden.productos || []).map(item => `
+                                <p style="font-size: 0.88rem; color: #94a3b8; margin-bottom: 2px;">• 1x ${item.name}</p>
+                                ${item.modifiers && item.modifiers.length > 0 ? `<div class="modifier-subtext">↳ ${item.modifiers.join(', ')}</div>` : ''}
+                            `).join('');
 
-                        return `
-                            <div class="kds-card delivered">
-                                <div class="kds-head">
-                                    <div>
-                                        <span>Orden #${orden.id} (${meta.baseType}) — Entregada</span>
-                                        ${timeStr ? `<small style="color:#94a3b8; margin-left:6px;">🕒 ${timeStr}</small>` : ''}
+                            return `
+                                <div class="kds-card delivered">
+                                    <div class="kds-head">
+                                        <div>
+                                            <span>Orden #${orden.id} (${meta.baseType}) — Entregada</span>
+                                            ${timeStr ? `<small style="color:#94a3b8; margin-left:6px;">🕒 ${timeStr}</small>` : ''}
+                                        </div>
+                                        <span class="order-cost-tag">Costo: $${amount.toFixed(2)} MXN</span>
                                     </div>
-                                    <span class="order-cost-tag">Costo: $${amount.toFixed(2)} MXN</span>
+                                    ${meta.customerInfo ? `<div class="customer-badge">${meta.customerInfo}</div>` : ''}
+                                    <div style="font-size: 0.8rem; color: #38bdf8; margin-bottom: 8px;">Método de Pago: ${method}</div>
+                                    ${itemsHtml}
+                                    <div class="kds-actions-row">
+                                        <button class="btn-order-ticket" onclick="abrirTicketDesdeOrden(${orden.id})">🧾 Ver / Descargar Ticket (IMG o PDF)</button>
+                                    </div>
                                 </div>
-                                ${meta.customerInfo ? `<div class="customer-badge">${meta.customerInfo}</div>` : ''}
-                                <div style="font-size: 0.8rem; color: #38bdf8; margin-bottom: 8px;">Método de Pago: ${method}</div>
-                                ${itemsHtml}
-                                <div class="kds-actions-row">
-                                    <button class="btn-order-ticket" onclick="abrirTicketDesdeOrden(${orden.id})">🧾 Ver / Descargar Ticket (IMG o PDF)</button>
-                                </div>
-                            </div>
-                        `;
-                    }).join('');
+                            `;
+                        }).join('');
+                        deliveredHtml += `</div>`;
+                    }
                 });
 
                 deliveredContainer.innerHTML = deliveredHtml;
@@ -2698,19 +3170,21 @@
             revenueBanner.innerText = `$${totalRevenue.toFixed(2)} MXN`;
         }
 
-        // CAMBIAR ESTADO A "EN PREPARACIÓN"
-        async function marcarEnPreparacion(orderId) {
+        // CAMBIAR ESTADO A "EN PREPARACIÓN" O "LISTA PARA ENTREGAR" Y NOTIFICAR AL CLIENTE
+        async function cambiarEstadoOrden(orderId, nuevoEstado) {
             const orden = pendingOrders.find(o => o.id === orderId);
             if (orden) {
-                orden.estado = 'En Preparación';
+                orden.estado = nuevoEstado;
+                orderStatusHistory[orderId] = nuevoEstado;
+                mostrarAlertaEstadoCliente(orden, nuevoEstado);
                 renderOrdersSection();
-                showToastNotification(`👨‍🍳 Orden #${orderId} marcada En Preparación`);
+                renderClientLiveBoard();
             }
 
             if (supabaseClient) {
                 await supabaseClient
                     .from('ordenes')
-                    .update({ estado: 'En Preparación' })
+                    .update({ estado: nuevoEstado })
                     .eq('id', orderId);
                 await cargarOrdenesDesdeBD();
             }
@@ -2727,7 +3201,9 @@
             if (index !== -1) {
                 const ordenEntregada = pendingOrders.splice(index, 1)[0];
                 ordenEntregada.estado = 'Entregada';
+                orderStatusHistory[orderId] = 'Entregada';
                 deliveredOrders.unshift(ordenEntregada);
+                mostrarAlertaEstadoCliente(ordenEntregada, 'Entregada');
             }
 
             if (supabaseClient) {
@@ -2738,11 +3214,12 @@
                 await cargarOrdenesDesdeBD();
             } else {
                 renderOrdersSection();
+                renderClientLiveBoard();
             }
         }
 
         // =========================================================================
-        // SINCRONIZACIÓN AUTOMÁTICA CON SUPABASE
+        // SINCRONIZACIÓN CON SUPABASE Y DETECCIÓN DE CAMBIOS PARA NOTIFICAR CLIENTES
         // =========================================================================
         async function cargarOrdenesDesdeBD() {
             if (!supabaseClient) return;
@@ -2757,28 +3234,30 @@
                     return;
                 }
 
-                const newPending = data.filter(o => o.estado === 'Pendiente' || o.estado === 'En Preparación');
-                const newDelivered = data.filter(o => o.estado === 'Entregada');
+                // Detectar si alguna orden cambió de estado ("En Preparación", "Lista para Entregar", "Entregada")
+                // o si llegó una orden nueva para avisar con sonido y mostrar número de orden + nombre
+                data.forEach(orden => {
+                    const prevStatus = orderStatusHistory[orden.id];
 
-                let hasBrandNewOrder = false;
-                newPending.forEach(o => {
-                    if (!knownPendingOrderIds.has(o.id)) {
-                        knownPendingOrderIds.add(o.id);
-                        if (initialLoadComplete) {
-                            hasBrandNewOrder = true;
+                    if (initialLoadComplete) {
+                        if (!prevStatus && orden.estado === 'Pendiente' && isStaffAuthorized) {
+                            playStatusSound('prep');
+                            showToastNotification(`🔔 ¡Nueva Orden #${orden.id} recibida en cocina!`);
+                        } else if (prevStatus && prevStatus !== orden.estado) {
+                            // Notificar en todos los dispositivos cuando cambia a En Preparación, Lista para Entregar o Entregada
+                            mostrarAlertaEstadoCliente(orden, orden.estado);
                         }
                     }
+
+                    orderStatusHistory[orden.id] = orden.estado;
                 });
 
-                if (hasBrandNewOrder && isStaffAuthorized) {
-                    playKitchenBell();
-                    showToastNotification('🔔 ¡Llegó una nueva orden a cocina!');
-                }
-
                 initialLoadComplete = true;
-                pendingOrders = newPending;
-                deliveredOrders = newDelivered;
+                pendingOrders = data.filter(o => o.estado !== 'Entregada');
+                deliveredOrders = data.filter(o => o.estado === 'Entregada');
+
                 renderOrdersSection();
+                renderClientLiveBoard();
             } catch (err) {
                 console.error('Error al sincronizar órdenes:', err);
             }
@@ -2788,7 +3267,7 @@
             cargarOrdenesDesdeBD();
             setInterval(() => {
                 cargarOrdenesDesdeBD();
-            }, 5000);
+            }, 4000);
         }
     </script>
 </body>
