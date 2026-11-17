@@ -811,6 +811,25 @@
             cursor: pointer;
         }
 
+        .btn-fill-inventory {
+            background: #22c55e;
+            color: #0b0f19;
+            border: none;
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            font-weight: 900;
+            cursor: pointer;
+            box-shadow: 0 0 12px rgba(34, 197, 94, 0.35);
+            transition: transform 0.15s;
+        }
+
+        .btn-fill-inventory:hover {
+            transform: translateY(-1px);
+            background: #16a34a;
+            color: #ffffff;
+        }
+
         /* CARRITO / TICKET FLOTANTE */
         .cart-bar {
             background: #111827;
@@ -868,7 +887,7 @@
 
         #checkout-modal { z-index: 1000; }
         #modify-modal { z-index: 1250; }
-        #ticket-modal, #pin-modal, #support-modal { z-index: 1350; }
+        #ticket-modal, #pin-modal, #support-modal, #missing-stock-modal { z-index: 1350; }
 
         .modal-card {
             background: #1e293b;
@@ -886,6 +905,29 @@
             color: #ffffff;
             margin-bottom: 6px;
             font-size: 1.3rem;
+        }
+
+        /* LISTA DE FALTANTES DE INVENTARIO (SOLO PERSONAL PIN) */
+        .missing-stock-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin: 14px 0;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        .missing-stock-item {
+            background: rgba(239, 68, 68, 0.12);
+            border: 1px solid #ef4444;
+            border-left: 4px solid #ef4444;
+            border-radius: 8px;
+            padding: 10px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.86rem;
         }
 
         /* TARJETAS DE SOPORTE */
@@ -1629,8 +1671,8 @@
                 <h3>SISTEMA PARA GESTIONAR ORDENES E INVENTARIO</h3>
 
                 <div class="welcome-banner-card">
-                    <p>BIENVENIDO A PANCHIBURGUERS</p>
-                    <span>Menú oficial completo con Hamburguesas, Hot Dogs, Quesadillas, Papas y Refrescos, notificaciones en vivo y control de inventario.</span>
+                    <p>Bienvenido a Panchiburguers, ingresa para realizar y administrar tu pedido</p>
+                    <span>Menú oficial completo con Hamburguesas, Hot Dogs, Quesadillas, Papas y Refrescos, notificaciones en vivo e inventario en la nube.</span>
                 </div>
 
                 <div class="welcome-features-grid">
@@ -1645,9 +1687,9 @@
                         <small>Alerta sonora con tu # de orden y nombre</small>
                     </div>
                     <div class="feature-mini-card">
-                        <span class="f-icon">📦</span>
-                        <strong>Control de Inventario</strong>
-                        <small>Descuento automático de insumos por venta</small>
+                        <span class="f-icon">☁️</span>
+                        <strong>Inventario en BD</strong>
+                        <small>Guardado en Supabase y sincronizado cada 5s</small>
                     </div>
                 </div>
 
@@ -1719,7 +1761,7 @@
         <div id="section-ordenes" class="view-section">
             
             <div class="orders-toolbar">
-                <span style="font-size: 0.82rem; color: #94a3b8;">🔄 Sincronización en tiempo real activa (cada 4s)</span>
+                <span style="font-size: 0.82rem; color: #94a3b8;">🔄 Sincronización automática de órdenes e inventario con Supabase (cada 5s)</span>
                 <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                     <button class="btn-collapse-toggle" onclick="toggleAllOrdersCollapse()">
                         📂 Comprimir / Desplegar Todo
@@ -1738,7 +1780,7 @@
             </div>
             <div id="pending-sec-body">
                 <p style="color: #94a3b8; font-size: 0.84rem; margin-bottom: 10px;">
-                    Presiona <strong>"En Preparación"</strong>, <strong>"Lista para Entregar"</strong> o <strong>"Entregar Orden"</strong> para notificar con sonido al dispositivo del cliente.
+                    Al presionar <strong>"En Preparación"</strong> se valida que existan todos los ingredientes en el inventario antes de descontarlos y avisar al cliente.
                 </p>
                 <div class="kds-grid" id="pending-orders-container">
                     <div class="empty-orders-msg">No hay órdenes pendientes en este momento.</div>
@@ -1803,29 +1845,30 @@
             </div>
         </div>
 
-        <!-- 4. NUEVA SECCIÓN INVENTARIO Y MATERIA PRIMA (PROTEGIDA CON PIN 2684) -->
+        <!-- 4. SECCIÓN INVENTARIO Y MATERIA PRIMA CONECTADA A SUPABASE -->
         <div id="section-inventario" class="view-section">
             <div class="orders-toolbar">
                 <div>
-                    <strong style="color: #facc15; font-size: 1rem;">📦 Control de Inventario y Materia Prima</strong>
-                    <p style="color: #94a3b8; font-size: 0.8rem;">
-                        Los ingredientes se descuentan automáticamente con cada venta según la receta y los extras de cada producto.
+                    <strong style="color: #facc15; font-size: 1rem;">☁️ Control de Inventario Conectado a Base de Datos (Supabase)</strong>
+                    <p id="inventory-db-status" style="color: #38bdf8; font-size: 0.8rem; margin-top: 2px;">
+                        🔄 Sincronizando existencias con la tabla "inventario" cada 5 segundos...
                     </p>
                 </div>
-                <button class="btn-day-summary-ticket" onclick="restablecerInventarioBase()">
-                    🔄 Restablecer Stock Inicial
-                </button>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <button class="btn-fill-inventory" onclick="llenarInventarioA50()">
+                        📦 Llenar Inventario (50)
+                    </button>
+                    <button class="btn-day-summary-ticket" onclick="restablecerInventarioBase()">
+                        🔄 Reiniciar Inventario a 0 en BD
+                    </button>
+                </div>
             </div>
 
-            <!-- ALERTA AUTOMÁTICA DE COMPRAS CUANDO UN INSUMO ESTÁ BAJO O AGOTADO -->
-            <div id="inventory-shopping-alert" class="inventory-alert-box all-good">
-                <!-- Se actualiza dinámicamente -->
-            </div>
+            <!-- ALERTA AUTOMÁTICA DE COMPRAS CUANDO UN INSUMO ESTÁ EN 0 O BAJO -->
+            <div id="inventory-shopping-alert" class="inventory-alert-box"></div>
 
             <!-- TARJETAS DE INGREDIENTES Y MATERIA PRIMA -->
-            <div id="inventory-items-container" class="inventory-grid">
-                <!-- Se genera dinámicamente con el stock disponible y botones para agregar más -->
-            </div>
+            <div id="inventory-items-container" class="inventory-grid"></div>
         </div>
 
     </div>
@@ -1837,6 +1880,29 @@
             <strong id="cart-total-amount">$0.00 MXN</strong>
         </div>
         <button class="btn-checkout" onclick="openCheckoutModal()">Pagar Orden</button>
+    </div>
+
+    <!-- MODAL DE AVISO DE FALTA DE INVENTARIO (EXCLUSIVO PARA PERSONAL CON PIN DESBLOQUEADO) -->
+    <div class="modal-overlay" id="missing-stock-modal">
+        <div class="modal-card" style="max-width: 450px; border-top: 5px solid #ef4444;">
+            <h3 style="color: #f87171;">⚠️ No se puede preparar la orden</h3>
+            <p id="missing-stock-subtitle" style="color: #cbd5e1; font-size: 0.88rem; margin-top: 4px;">
+                Faltan los siguientes ingredientes en el inventario para poder preparar esta orden:
+            </p>
+
+            <div id="missing-stock-list" class="missing-stock-list"></div>
+
+            <p style="color: #94a3b8; font-size: 0.78rem; margin-bottom: 10px;">
+                🔒 <em>Este aviso es privado y solo es visible para el personal con el PIN desbloqueado.</em>
+            </p>
+
+            <button class="btn-enter-system" style="margin-top: 4px;" onclick="irAInventarioDesdeAlerta()">
+                📦 Ir a Inventario para Surtir Ingredientes
+            </button>
+            <button class="modal-close" style="background: #334155;" onclick="closeMissingStockModal()">
+                Cerrar Aviso
+            </button>
+        </div>
     </div>
 
     <!-- MODAL DE SOPORTE (CONTACTO DE LOS 4 CREADORES) -->
@@ -1992,7 +2058,7 @@
         </div>
     </div>
 
-    <!-- SCRIPTS DE INTERACCIÓN, MENÚ COMPLETO, INVENTARIO Y SUPABASE -->
+    <!-- SCRIPTS DE INTERACCIÓN, MENÚ COMPLETO, INVENTARIO EN SUPABASE Y ÓRDENES -->
     <script>
         // =========================================================================
         // CONFIGURACIÓN DE BASE DE DATOS (SUPABASE)
@@ -2039,7 +2105,7 @@
         let editingCartIndex = null;
 
         // =========================================================================
-        // 1. CATÁLOGO COMPLETO DEL MENÚ OFICIAL DE PANCHIBURGUERS + RECETA DE INSUMOS
+        // 1. CATÁLOGO COMPLETO DEL MENÚ OFICIAL (CON FOTOS DISTINTAS EN CADA HOT DOG)
         // =========================================================================
         const MENU_PRODUCTS = [
             // --- HAMBURGUESAS ---
@@ -2110,7 +2176,7 @@
                 category: 'hamburguesa',
                 categoryLabel: '🍔 Hamburguesa',
                 desc: 'Tocino, quesillo, queso amarillo, jamón, carne de res, verdura y aderezos de la casa.',
-                img: 'https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=600&q=80',
+                img: 'https://images.unsplash.com/photo-1565299507177-b0ac66763828?auto=format&fit=crop&w=600&q=80',
                 recipe: { pan_hamburguesa: 1, carne_res: 1, tocino: 1, quesillo: 1, queso_amarillo: 1, jamon: 1, lechuga: 1, jitomate: 1, cebolla_habanero: 1, aderezos: 1 }
             },
             {
@@ -2120,7 +2186,7 @@
                 category: 'hamburguesa',
                 categoryLabel: '🍔 Hamburguesa',
                 desc: 'Tocino, quesillo, queso amarillo, jamón, piña asada, carne de res, verdura y aderezos.',
-                img: 'https://images.unsplash.com/photo-1586190848861-99aa4a171e90?auto=format&fit=crop&w=600&q=80',
+                img: 'https://images.unsplash.com/photo-1551782450-a2132b4ba21d?auto=format&fit=crop&w=600&q=80',
                 recipe: { pan_hamburguesa: 1, carne_res: 1, tocino: 1, quesillo: 1, queso_amarillo: 1, jamon: 1, pina: 1, lechuga: 1, jitomate: 1, cebolla_habanero: 1, aderezos: 1 }
             },
             {
@@ -2130,7 +2196,7 @@
                 category: 'hamburguesa',
                 categoryLabel: '🧀 Especialidad',
                 desc: 'Mezcla gratinada de quesos Cheddar, Mozzarella y Gouda sobre carne de res con verdura y aderezos.',
-                img: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=600&q=80',
+                img: 'https://images.unsplash.com/photo-1520072959219-c595dc870360?auto=format&fit=crop&w=600&q=80',
                 recipe: { pan_hamburguesa: 1, carne_res: 1, mezcla_3_quesos: 1, lechuga: 1, jitomate: 1, cebolla_habanero: 1, aderezos: 1 }
             },
             {
@@ -2144,7 +2210,7 @@
                 recipe: { pan_hamburguesa: 1, carne_res: 2, quesillo: 1, tocino: 1, queso_amarillo: 1, jamon: 1, pina: 1, salchicha: 2, lechuga: 1, jitomate: 1, cebolla_habanero: 1, aderezos: 1 }
             },
 
-            // --- HOT DOGS ---
+            // --- HOT DOGS (6 FOTOS DIFERENTES) ---
             {
                 id: 'hd_orden3',
                 name: 'Orden de 3 Hot Dog Sencillos',
@@ -2162,7 +2228,7 @@
                 category: 'hotdog',
                 categoryLabel: '🌭 Hot Dog',
                 desc: 'Hot Dog individual clásico con verdura (jitomate, cebolla con habanero) y aderezos.',
-                img: 'https://images.unsplash.com/photo-1619740455993-9e612b1af08a?auto=format&fit=crop&w=600&q=80',
+                img: 'https://images.unsplash.com/photo-1541214113241-21578d2d9b62?auto=format&fit=crop&w=600&q=80',
                 recipe: { pan_hotdog: 1, salchicha: 1, jitomate: 1, cebolla_habanero: 1, aderezos: 1 }
             },
             {
@@ -2171,8 +2237,8 @@
                 price: 35,
                 category: 'hotdog',
                 categoryLabel: '🌭 Hot Dog',
-                desc: 'Hot Dog con quesillo fundido, verdura fresca y aderezos de la casa.',
-                img: 'https://images.unsplash.com/photo-1619740455993-9e612b1af08a?auto=format&fit=crop&w=600&q=80',
+                desc: 'Hot Dog con quesillo fundido gratinado, verdura fresca y aderezos de la casa.',
+                img: 'https://images.unsplash.com/photo-1627054245715-048082d2272c?auto=format&fit=crop&w=600&q=80',
                 recipe: { pan_hotdog: 1, salchicha: 1, quesillo: 1, jitomate: 1, cebolla_habanero: 1, aderezos: 1 }
             },
             {
@@ -2182,7 +2248,7 @@
                 category: 'hotdog',
                 categoryLabel: '🌭 Hot Dog',
                 desc: 'Salchicha envuelta en tocino crujiente con jitomate, cebolla con habanero y aderezos.',
-                img: 'https://images.unsplash.com/photo-1619740455993-9e612b1af08a?auto=format&fit=crop&w=600&q=80',
+                img: 'https://images.unsplash.com/photo-1612392062631-94dd858cba88?auto=format&fit=crop&w=600&q=80',
                 recipe: { pan_hotdog: 1, salchicha: 1, tocino: 1, jitomate: 1, cebolla_habanero: 1, aderezos: 1 }
             },
             {
@@ -2192,7 +2258,7 @@
                 category: 'hotdog',
                 categoryLabel: '🌭 Hot Dog Especial',
                 desc: 'Preparado con tocino, quesillo, queso amarillo, jamón, verdura y aderezos.',
-                img: 'https://images.unsplash.com/photo-1619740455993-9e612b1af08a?auto=format&fit=crop&w=600&q=80',
+                img: 'https://images.unsplash.com/photo-1612392061787-2d078b3e573c?auto=format&fit=crop&w=600&q=80',
                 recipe: { pan_hotdog: 1, salchicha: 1, tocino: 1, quesillo: 1, queso_amarillo: 1, jamon: 1, jitomate: 1, cebolla_habanero: 1, aderezos: 1 }
             },
             {
@@ -2202,7 +2268,7 @@
                 category: 'hotdog',
                 categoryLabel: '🌭 Hot Dog Hawaiano',
                 desc: 'Tocino, quesillo, queso amarillo, jamón y piña asada con verdura y aderezos.',
-                img: 'https://images.unsplash.com/photo-1619740455993-9e612b1af08a?auto=format&fit=crop&w=600&q=80',
+                img: 'https://images.unsplash.com/photo-1599599810694-b5b37304c041?auto=format&fit=crop&w=600&q=80',
                 recipe: { pan_hotdog: 1, salchicha: 1, tocino: 1, quesillo: 1, queso_amarillo: 1, jamon: 1, pina: 1, jitomate: 1, cebolla_habanero: 1, aderezos: 1 }
             },
 
@@ -2304,53 +2370,85 @@
         };
 
         // =========================================================================
-        // 3. SISTEMA DE INVENTARIO DE MATERIA PRIMA E INGREDIENTES
+        // 3. INVENTARIO CONECTADO A SUPABASE (TABLA 'inventario') + VALIDACIÓN DE STOCK
         // =========================================================================
         const DEFAULT_INVENTORY = {
-            pan_hamburguesa: { name: 'Pan de Hamburguesa', icon: '🍔', stock: 45, minStock: 10, unit: 'piezas' },
-            carne_res:       { name: 'Carne de Res', icon: '🥩', stock: 50, minStock: 12, unit: 'piezas' },
-            pan_hotdog:      { name: 'Pan para Hot Dog', icon: '🌭', stock: 40, minStock: 10, unit: 'piezas' },
-            salchicha:       { name: 'Salchichas', icon: '🌭', stock: 50, minStock: 12, unit: 'piezas' },
-            quesillo:        { name: 'Quesillo', icon: '🧀', stock: 40, minStock: 10, unit: 'porciones' },
-            queso_amarillo:  { name: 'Queso Amarillo', icon: '🟨', stock: 40, minStock: 10, unit: 'rebanadas' },
-            mezcla_3_quesos: { name: 'Mezcla 3 Quesos (Cheddar, Mozzarella, Gouda)', icon: '🧀', stock: 25, minStock: 6, unit: 'porciones' },
-            tocino:          { name: 'Tocino', icon: '🥓', stock: 40, minStock: 10, unit: 'porciones' },
-            jamon:           { name: 'Jamón', icon: '🍖', stock: 40, minStock: 10, unit: 'rebanadas' },
-            pina:            { name: 'Piña en Rebanadas', icon: '🍍', stock: 30, minStock: 8, unit: 'rebanadas' },
-            tortilla_harina: { name: 'Tortillas para Quesadilla', icon: '🫓', stock: 30, minStock: 8, unit: 'piezas' },
-            papas_francesa:  { name: 'Papas a la Francesa', icon: '🍟', stock: 30, minStock: 8, unit: 'órdenes' },
-            refrescos:       { name: 'Refrescos 600ml', icon: '🥤', stock: 36, minStock: 8, unit: 'botellas' },
-            lechuga:         { name: 'Lechuga Fresca', icon: '🥬', stock: 50, minStock: 10, unit: 'porciones' },
-            jitomate:        { name: 'Jitomate', icon: '🍅', stock: 50, minStock: 10, unit: 'porciones' },
-            cebolla_habanero:{ name: 'Cebolla con Habanero y Picante', icon: '🌶️', stock: 50, minStock: 10, unit: 'porciones' },
-            aderezos:        { name: 'Aderezos (Mayonesa, Cátsup, Mostaza y BBQ)', icon: '🍯', stock: 60, minStock: 12, unit: 'porciones' }
+            pan_hamburguesa: { name: 'Pan de Hamburguesa', icon: '🍔', stock: 0, minStock: 10, unit: 'piezas' },
+            carne_res:       { name: 'Carne de Res', icon: '🥩', stock: 0, minStock: 12, unit: 'piezas' },
+            pan_hotdog:      { name: 'Pan para Hot Dog', icon: '🌭', stock: 0, minStock: 10, unit: 'piezas' },
+            salchicha:       { name: 'Salchichas', icon: '🌭', stock: 0, minStock: 12, unit: 'piezas' },
+            quesillo:        { name: 'Quesillo', icon: '🧀', stock: 0, minStock: 10, unit: 'porciones' },
+            queso_amarillo:  { name: 'Queso Amarillo', icon: '🟨', stock: 0, minStock: 10, unit: 'rebanadas' },
+            mezcla_3_quesos: { name: 'Mezcla 3 Quesos (Cheddar, Mozzarella, Gouda)', icon: '🧀', stock: 0, minStock: 6, unit: 'porciones' },
+            tocino:          { name: 'Tocino', icon: '🥓', stock: 0, minStock: 10, unit: 'porciones' },
+            jamon:           { name: 'Jamón', icon: '🍖', stock: 0, minStock: 10, unit: 'rebanadas' },
+            pina:            { name: 'Piña en Rebanadas', icon: '🍍', stock: 0, minStock: 8, unit: 'rebanadas' },
+            tortilla_harina: { name: 'Tortillas para Quesadilla', icon: '🫓', stock: 0, minStock: 8, unit: 'piezas' },
+            papas_francesa:  { name: 'Papas a la Francesa', icon: '🍟', stock: 0, minStock: 8, unit: 'órdenes' },
+            refrescos:       { name: 'Refrescos 600ml', icon: '🥤', stock: 0, minStock: 8, unit: 'botellas' },
+            lechuga:         { name: 'Lechuga Fresca', icon: '🥬', stock: 0, minStock: 10, unit: 'porciones' },
+            jitomate:        { name: 'Jitomate', icon: '🍅', stock: 0, minStock: 10, unit: 'porciones' },
+            cebolla_habanero:{ name: 'Cebolla con Habanero y Picante', icon: '🌶️', stock: 0, minStock: 10, unit: 'porciones' },
+            aderezos:        { name: 'Aderezos (Mayonesa, Cátsup, Mostaza y BBQ)', icon: '🍯', stock: 0, minStock: 12, unit: 'porciones' }
         };
 
+        const INVENTORY_STORAGE_KEY = 'panchiburguers_inventory_zero_v2';
+        const DEDUCTED_ORDERS_KEY = 'panchiburguers_deducted_orders_v2';
+
         let inventoryData = cargarInventarioLocal();
+        let deductedOrderIds = cargarOrdenesDescontadasLocal();
 
         function cargarInventarioLocal() {
             try {
-                const saved = localStorage.getItem('panchiburguers_inventory_v1');
+                const saved = localStorage.getItem(INVENTORY_STORAGE_KEY);
                 if (saved) {
                     const parsed = JSON.parse(saved);
-                    return { ... structuredClone(DEFAULT_INVENTORY), ...parsed };
+                    const merged = JSON.parse(JSON.stringify(DEFAULT_INVENTORY));
+                    Object.keys(merged).forEach(k => {
+                        if (parsed[k] && typeof parsed[k].stock === 'number') {
+                            merged[k].stock = parsed[k].stock;
+                        }
+                    });
+                    return merged;
                 }
             } catch (e) {
-                console.error('Error al leer inventario:', e);
+                console.error('Error al leer inventario local:', e);
             }
             return JSON.parse(JSON.stringify(DEFAULT_INVENTORY));
         }
 
         function guardarInventarioLocal() {
             try {
-                localStorage.setItem('panchiburguers_inventory_v1', JSON.stringify(inventoryData));
+                localStorage.setItem(INVENTORY_STORAGE_KEY, JSON.stringify(inventoryData));
             } catch (e) {
-                console.error('Error al guardar inventario:', e);
+                console.error('Error al guardar inventario local:', e);
             }
         }
 
-        // Descontar automáticamente del inventario cada producto vendido y sus extras
-        function descontarInventarioPorOrden(itemsVendidos) {
+        function cargarOrdenesDescontadasLocal() {
+            try {
+                const saved = localStorage.getItem(DEDUCTED_ORDERS_KEY);
+                if (saved) {
+                    return new Set(JSON.parse(saved));
+                }
+            } catch (e) {
+                console.error('Error al leer órdenes descontadas:', e);
+            }
+            return new Set();
+        }
+
+        function guardarOrdenesDescontadasLocal() {
+            try {
+                localStorage.setItem(DEDUCTED_ORDERS_KEY, JSON.stringify([...deductedOrderIds]));
+            } catch (e) {
+                console.error('Error al guardar órdenes descontadas:', e);
+            }
+        }
+
+        // CALCULAR QUÉ INGREDIENTES Y CANTIDADES NECESITA UNA ORDEN
+        function calcularRequerimientosOrden(orden) {
+            const requeridos = {};
+            const itemsVendidos = (orden && orden.productos) ? orden.productos : [];
             const allModOpts = Object.values(MODIFICATION_OPTIONS).flat();
 
             itemsVendidos.forEach(item => {
@@ -2359,7 +2457,6 @@
 
                 if (prodDef && prodDef.recipe) {
                     Object.keys(prodDef.recipe).forEach(insumoKey => {
-                        // Revisar si el cliente pidió "Sin lechuga", "Sin jitomate", etc.
                         const skipped = mods.some(mLabel => {
                             const foundOpt = allModOpts.find(o => o.label === mLabel && o.skipIngredient === insumoKey);
                             return Boolean(foundOpt);
@@ -2367,25 +2464,194 @@
 
                         if (!skipped && inventoryData[insumoKey]) {
                             const qtyUsed = prodDef.recipe[insumoKey];
-                            inventoryData[insumoKey].stock = Math.max(0, inventoryData[insumoKey].stock - qtyUsed);
+                            requeridos[insumoKey] = (requeridos[insumoKey] || 0) + qtyUsed;
                         }
                     });
                 }
 
-                // Descontar ingredientes extra agregados ("Carne extra", "Ingrediente extra: Tocino", etc.)
                 mods.forEach(mLabel => {
                     const extraOpt = allModOpts.find(o => o.label === mLabel && o.addIngredient);
                     if (extraOpt && inventoryData[extraOpt.addIngredient]) {
-                        inventoryData[extraOpt.addIngredient].stock = Math.max(0, inventoryData[extraOpt.addIngredient].stock - 1);
+                        const extraKey = extraOpt.addIngredient;
+                        requeridos[extraKey] = (requeridos[extraKey] || 0) + 1;
                     }
                 });
             });
 
-            guardarInventarioLocal();
-            renderInventorySection();
+            return requeridos;
         }
 
-        function agregarStockInsumo(insumoKey, customAmount = null) {
+        // VERIFICAR SI FALTA ALGÚN INGREDIENTE EN EL INVENTARIO PARA PREPARAR LA ORDEN
+        function verificarFaltantesInventario(orden) {
+            const requeridos = calcularRequerimientosOrden(orden);
+            const faltantes = [];
+
+            Object.keys(requeridos).forEach(insumoKey => {
+                const cantNecesaria = requeridos[insumoKey];
+                const insumo = inventoryData[insumoKey];
+                const stockActual = insumo ? Number(insumo.stock || 0) : 0;
+
+                if (stockActual < cantNecesaria) {
+                    faltantes.push({
+                        clave: insumoKey,
+                        nombre: insumo ? insumo.name : insumoKey,
+                        icono: insumo ? insumo.icon : '⚠️',
+                        unidad: insumo ? insumo.unit : 'unidades',
+                        necesario: cantNecesaria,
+                        disponible: stockActual,
+                        faltante: cantNecesaria - stockActual
+                    });
+                }
+            });
+
+            return faltantes;
+        }
+
+        // MOSTRAR AVISO DE FALTANTES SOLO AL USUARIO CON EL PIN DESBLOQUEADO
+        function mostrarAvisoFaltaInventarioPersonal(orden, faltantes) {
+            if (!isStaffAuthorized) {
+                return; // Los clientes nunca ven este aviso
+            }
+
+            const subtitleEl = document.getElementById('missing-stock-subtitle');
+            const listEl = document.getElementById('missing-stock-list');
+
+            subtitleEl.innerHTML = `No se puede pasar la <strong>Orden #${orden.id}</strong> a preparación porque faltan los siguientes insumos en el inventario:`;
+
+            listEl.innerHTML = faltantes.map(f => `
+                <div class="missing-stock-item">
+                    <div>
+                        <strong style="color: #ffffff; display: block;">${f.icono} ${f.nombre}</strong>
+                        <span style="color: #cbd5e1; font-size: 0.78rem;">
+                            Requiere: <strong>${f.necesario}</strong> · Disponible: <strong>${f.disponible}</strong>
+                        </span>
+                    </div>
+                    <span style="color: #fca5a5; font-weight: 900; font-size: 0.82rem; white-space: nowrap;">
+                        Faltan ${f.faltante} ${f.unidad}
+                    </span>
+                </div>
+            `).join('');
+
+            document.getElementById('missing-stock-modal').style.display = 'flex';
+        }
+
+        function closeMissingStockModal() {
+            document.getElementById('missing-stock-modal').style.display = 'none';
+        }
+
+        function irAInventarioDesdeAlerta() {
+            closeMissingStockModal();
+            switchView('inventario');
+        }
+
+        // GUARDAR O ACTUALIZAR INSUMOS DIRECTAMENTE EN LA TABLA 'inventario' DE SUPABASE
+        async function guardarInsumosEnBD(clavesModificadas) {
+            if (!supabaseClient || !clavesModificadas || clavesModificadas.length === 0) return;
+
+            const filasParaUpsert = clavesModificadas
+                .filter(clave => inventoryData[clave])
+                .map(clave => ({
+                    clave: clave,
+                    nombre: inventoryData[clave].name,
+                    stock: Number(inventoryData[clave].stock || 0),
+                    updated_at: new Date().toISOString()
+                }));
+
+            try {
+                const { error } = await supabaseClient
+                    .from('inventario')
+                    .upsert(filasParaUpsert, { onConflict: 'clave' });
+
+                const statusEl = document.getElementById('inventory-db-status');
+                if (error) {
+                    console.error('Error al guardar en tabla inventario de Supabase:', error);
+                    if (statusEl) {
+                        statusEl.style.color = '#fbbf24';
+                        statusEl.innerText = '⚠️ Tabla "inventario" aún no creada en Supabase (usando respaldo local). Ejecuta el script SQL.';
+                    }
+                } else if (statusEl) {
+                    statusEl.style.color = '#4ade80';
+                    statusEl.innerText = '✅ Conectado a Supabase: Inventario guardado en la nube y sincronizado cada 5s.';
+                }
+            } catch (err) {
+                console.error('Error de red al guardar inventario en BD:', err);
+            }
+        }
+
+        // CARGAR INVENTARIO DESDE LA TABLA 'inventario' DE SUPABASE CADA 5 SEGUNDOS
+        async function cargarInventarioDesdeBD() {
+            if (!supabaseClient) return;
+            try {
+                const { data, error } = await supabaseClient
+                    .from('inventario')
+                    .select('*');
+
+                const statusEl = document.getElementById('inventory-db-status');
+
+                if (error) {
+                    if (statusEl) {
+                        statusEl.style.color = '#fbbf24';
+                        statusEl.innerText = '⚠️ Falta crear la tabla "inventario" en el SQL Editor de Supabase (funcionando en modo local).';
+                    }
+                    return;
+                }
+
+                if (!data || data.length === 0) {
+                    await guardarInsumosEnBD(Object.keys(inventoryData));
+                    return;
+                }
+
+                data.forEach(row => {
+                    if (row.clave && inventoryData[row.clave]) {
+                        inventoryData[row.clave].stock = Math.max(0, Number(row.stock || 0));
+                    }
+                });
+
+                if (statusEl) {
+                    statusEl.style.color = '#4ade80';
+                    statusEl.innerText = '✅ Conectado a Supabase: Inventario guardado en la nube y sincronizado cada 5s.';
+                }
+
+                guardarInventarioLocal();
+                renderInventorySection(true);
+            } catch (err) {
+                console.error('Error al sincronizar inventario desde Supabase:', err);
+            }
+        }
+
+        // DESCONTAR INGREDIENTES CUANDO LA ORDEN PASA A "EN PREPARACIÓN" Y GUARDAR EN SUPABASE
+        async function descontarInventarioPorOrdenSiCorresponde(orden) {
+            if (!orden || !orden.id) return false;
+            const estadosQueDescuentan = ['En Preparación', 'Lista para Entregar', 'Entregada'];
+            if (!estadosQueDescuentan.includes(orden.estado)) return false;
+
+            if (deductedOrderIds.has(orden.id)) {
+                return false;
+            }
+
+            const requeridos = calcularRequerimientosOrden(orden);
+            const clavesAfectadas = Object.keys(requeridos);
+
+            clavesAfectadas.forEach(insumoKey => {
+                if (inventoryData[insumoKey]) {
+                    const qtyUsed = requeridos[insumoKey];
+                    inventoryData[insumoKey].stock = Math.max(0, inventoryData[insumoKey].stock - qtyUsed);
+                }
+            });
+
+            deductedOrderIds.add(orden.id);
+            guardarOrdenesDescontadasLocal();
+            guardarInventarioLocal();
+            renderInventorySection(true);
+
+            if (clavesAfectadas.length > 0) {
+                await guardarInsumosEnBD(clavesAfectadas);
+            }
+            return true;
+        }
+
+        // AGREGAR O AJUSTAR STOCK DE UN INGREDIENTE Y GUARDAR EN SUPABASE
+        async function agregarStockInsumo(insumoKey, customAmount = null) {
             if (!inventoryData[insumoKey]) return;
             let amount = customAmount;
 
@@ -2401,23 +2667,53 @@
 
             inventoryData[insumoKey].stock = Math.max(0, inventoryData[insumoKey].stock + amount);
             guardarInventarioLocal();
-            renderInventorySection();
-            showToastNotification(`📦 ${inventoryData[insumoKey].name}: Stock actualizado a ${inventoryData[insumoKey].stock} ${inventoryData[insumoKey].unit}`);
+            renderInventorySection(true);
+
+            await guardarInsumosEnBD([insumoKey]);
+            showToastNotification(`☁️ ${inventoryData[insumoKey].name}: ${inventoryData[insumoKey].stock} ${inventoryData[insumoKey].unit} guardado en BD`);
         }
 
-        function restablecerInventarioBase() {
-            if (confirm('¿Deseas restablecer todas las existencias del inventario a sus valores iniciales?')) {
-                inventoryData = JSON.parse(JSON.stringify(DEFAULT_INVENTORY));
+        // NUEVO BOTÓN: LLENAR TODO EL INVENTARIO A 50 UNIDADES EN LOCAL Y EN SUPABASE
+        async function llenarInventarioA50() {
+            if (confirm('¿Deseas llenar todos los ingredientes del inventario a 50 unidades en la base de datos?')) {
+                Object.keys(inventoryData).forEach(k => {
+                    inventoryData[k].stock = 50;
+                });
                 guardarInventarioLocal();
-                renderInventorySection();
-                showToastNotification('📦 Inventario restablecido al stock inicial');
+                renderInventorySection(false);
+
+                await guardarInsumosEnBD(Object.keys(inventoryData));
+                showToastNotification('📦 ¡Inventario llenado a 50 en todos los ingredientes!');
             }
         }
 
-        function renderInventorySection() {
+        // REINICIAR TODO EL INVENTARIO A 0 EN LOCAL Y EN SUPABASE
+        async function restablecerInventarioBase() {
+            if (confirm('¿Deseas reiniciar todas las existencias del inventario a 0 en la base de datos?')) {
+                inventoryData = JSON.parse(JSON.stringify(DEFAULT_INVENTORY));
+                guardarInventarioLocal();
+                renderInventorySection(false);
+
+                await guardarInsumosEnBD(Object.keys(inventoryData));
+                showToastNotification('☁️ Inventario reiniciado a 0 en la Base de Datos');
+            }
+        }
+
+        function renderInventorySection(preserveInputs = true) {
             const container = document.getElementById('inventory-items-container');
             const alertBox = document.getElementById('inventory-shopping-alert');
             if (!container || !alertBox) return;
+
+            const savedInputValues = {};
+            const activeInputId = document.activeElement ? document.activeElement.id : null;
+            if (preserveInputs) {
+                Object.keys(inventoryData).forEach(k => {
+                    const existingInput = document.getElementById(`inv-input-${k}`);
+                    if (existingInput) {
+                        savedInputValues[k] = existingInput.value;
+                    }
+                });
+            }
 
             const lowItems = [];
             const emptyItems = [];
@@ -2436,7 +2732,7 @@
 
                 if (isOut) {
                     cardClass = 'out-of-stock';
-                    badgeHtml = `<span class="inv-status-badge empty">🚨 Agotado (Comprar)</span>`;
+                    badgeHtml = `<span class="inv-status-badge empty">🚨 En 0 / Agotado</span>`;
                     barColor = '#ef4444';
                 } else if (isLow) {
                     cardClass = 'low-stock';
@@ -2446,6 +2742,7 @@
 
                 const maxRef = Math.max(item.minStock * 4, item.stock, 1);
                 const pct = Math.min(100, Math.round((item.stock / maxRef) * 100));
+                const inputVal = savedInputValues[key] !== undefined ? savedInputValues[key] : '10';
 
                 return `
                     <div class="inventory-card ${cardClass}">
@@ -2458,7 +2755,7 @@
                                 ${badgeHtml}
                             </div>
                             <div style="margin-top: 8px; display:flex; justify-content:space-between; align-items:baseline;">
-                                <span style="font-size: 0.78rem; color:#cbd5e1;">Disponible:</span>
+                                <span style="font-size: 0.78rem; color:#cbd5e1;">Disponible en BD:</span>
                                 <span class="inv-stock-number">${item.stock} <small style="font-size:0.75rem; font-weight:600; color:#94a3b8;">${item.unit}</small></span>
                             </div>
                             <div class="inv-progress-bg">
@@ -2467,13 +2764,13 @@
                         </div>
 
                         <div>
-                            <div style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 4px;">➕ Surtir compra / Ajustar:</div>
+                            <div style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 4px;">➕ Surtir compra / Guardar en BD:</div>
                             <div class="inv-restock-controls">
-                                <input type="number" id="inv-input-${key}" class="inv-input-qty" value="10" min="1">
+                                <input type="number" id="inv-input-${key}" class="inv-input-qty" value="${inputVal}" min="1">
                                 <button class="btn-inv-add" onclick="agregarStockInsumo('${key}')">+ Agregar</button>
                                 <button class="btn-inv-quick" onclick="agregarStockInsumo('${key}', 5)">+5</button>
                                 <button class="btn-inv-quick" onclick="agregarStockInsumo('${key}', 20)">+20</button>
-                                <button class="btn-inv-minus" title="Descontar 1 por merma" onclick="agregarStockInsumo('${key}', -1)">-1</button>
+                                <button class="btn-inv-minus" title="Descontar 1" onclick="agregarStockInsumo('${key}', -1)">-1</button>
                             </div>
                         </div>
                     </div>
@@ -2482,10 +2779,15 @@
 
             container.innerHTML = cardsHtml;
 
+            if (activeInputId) {
+                const restoreFocusEl = document.getElementById(activeInputId);
+                if (restoreFocusEl) restoreFocusEl.focus();
+            }
+
             if (emptyItems.length === 0 && lowItems.length === 0) {
                 alertBox.className = 'inventory-alert-box all-good';
                 alertBox.innerHTML = `
-                    <strong style="color: #4ade80; font-size: 0.95rem;">✅ Todo el inventario está completo</strong>
+                    <strong style="color: #4ade80; font-size: 0.95rem;">✅ Todo el inventario está abastecido</strong>
                     <p style="font-size: 0.82rem; color: #cbd5e1; margin-top: 3px;">
                         Ningún ingrediente está por debajo del mínimo recomendado en este momento.
                     </p>
@@ -2494,10 +2796,10 @@
                 alertBox.className = 'inventory-alert-box';
                 let htmlMsg = `<strong style="color: #f87171; font-size: 0.95rem;">🛒 Aviso de Compras para el Puesto:</strong>`;
                 if (emptyItems.length > 0) {
-                    htmlMsg += `<p style="font-size: 0.83rem; color: #fca5a5; margin-top: 4px;">🚨 <strong>Agotados (Urgente):</strong> ${emptyItems.join(', ')}</p>`;
+                    htmlMsg += `<p style="font-size: 0.83rem; color: #fca5a5; margin-top: 4px;">🚨 <strong>En 0 / Agotados (${emptyItems.length}):</strong> ${emptyItems.join(', ')}</p>`;
                 }
                 if (lowItems.length > 0) {
-                    htmlMsg += `<p style="font-size: 0.83rem; color: #fde68a; margin-top: 4px;">⚠️ <strong>Por terminarse (Comprar pronto):</strong> ${lowItems.join(', ')}</p>`;
+                    htmlMsg += `<p style="font-size: 0.83rem; color: #fde68a; margin-top: 4px;">⚠️ <strong>Por terminarse:</strong> ${lowItems.join(', ')}</p>`;
                 }
                 alertBox.innerHTML = htmlMsg;
             }
@@ -2765,6 +3067,7 @@
             if (isStaffAuthorized) {
                 isStaffAuthorized = false;
                 updateStaffLockUI();
+                closeMissingStockModal();
                 const inProtectedView = document.getElementById('section-ordenes').classList.contains('active') ||
                                         document.getElementById('section-inventario').classList.contains('active');
                 if (inProtectedView) {
@@ -2796,6 +3099,8 @@
                     pendingOrders = [];
                     deliveredOrders = [];
                     orderStatusHistory = {};
+                    deductedOrderIds.clear();
+                    guardarOrdenesDescontadasLocal();
 
                     if (supabaseClient) {
                         try {
@@ -2854,7 +3159,8 @@
             updateCartUI();
 
             if (viewId === 'inventario') {
-                renderInventorySection();
+                renderInventorySection(true);
+                cargarInventarioDesdeBD();
             }
 
             if (supabaseClient) {
@@ -3093,7 +3399,7 @@
         }
 
         // =========================================================================
-        // PROCESAR PAGO, DESCONTAR INVENTARIO Y GENERAR TICKET DIGITAL
+        // PROCESAR PAGO Y GENERAR TICKET DIGITAL
         // =========================================================================
         async function processPayment() {
             if (cartItems.length === 0) {
@@ -3175,9 +3481,6 @@
                     console.error('Error de conexión con la BD:', err);
                 }
             }
-
-            // Descontar automáticamente del inventario los ingredientes utilizados
-            descontarInventarioPorOrden(cartItems);
 
             orderStatusHistory[nuevaOrden.id] = 'Pendiente';
             pendingOrders.unshift(nuevaOrden);
@@ -3789,23 +4092,41 @@
             revenueBanner.innerText = `$${totalRevenue.toFixed(2)} MXN`;
         }
 
+        // CAMBIAR ESTADO DE LA ORDEN VALIDANDO PRIMERO QUE HAYA INGREDIENTES DISPONIBLES
         async function cambiarEstadoOrden(orderId, nuevoEstado) {
-            const orden = pendingOrders.find(o => o.id === orderId);
-            if (orden) {
+            requireStaffPin(async () => {
+                const orden = pendingOrders.find(o => o.id === orderId);
+                if (!orden) return;
+
+                // Si la orden aún no ha descontado inventario, verificar que existan todos los ingredientes necesarios
+                if (!deductedOrderIds.has(orden.id)) {
+                    const faltantes = verificarFaltantesInventario(orden);
+                    if (faltantes.length > 0) {
+                        mostrarAvisoFaltaInventarioPersonal(orden, faltantes);
+                        return; // Bloquea el cambio a "En Preparación" hasta que haya inventario
+                    }
+                }
+
                 orden.estado = nuevoEstado;
                 orderStatusHistory[orderId] = nuevoEstado;
+
+                const descontado = await descontarInventarioPorOrdenSiCorresponde(orden);
+                if (descontado) {
+                    showToastNotification(`☁️ Inventario descontado en BD por Orden #${orden.id}`);
+                }
+
                 mostrarAlertaEstadoCliente(orden, nuevoEstado);
                 renderOrdersSection();
                 renderClientLiveBoard();
-            }
 
-            if (supabaseClient) {
-                await supabaseClient
-                    .from('ordenes')
-                    .update({ estado: nuevoEstado })
-                    .eq('id', orderId);
-                await cargarOrdenesDesdeBD();
-            }
+                if (supabaseClient) {
+                    await supabaseClient
+                        .from('ordenes')
+                        .update({ estado: nuevoEstado })
+                        .eq('id', orderId);
+                    await cargarOrdenesDesdeBD();
+                }
+            });
         }
 
         function solicitarEntregarOrden(orderId) {
@@ -3817,9 +4138,21 @@
         async function entregarOrden(orderId) {
             const index = pendingOrders.findIndex(o => o.id === orderId);
             if (index !== -1) {
+                const ordenPorEntregar = pendingOrders[index];
+
+                // Si se intenta entregar directo desde "Pendiente" sin haber descontado inventario, validar primero
+                if (!deductedOrderIds.has(ordenPorEntregar.id)) {
+                    const faltantes = verificarFaltantesInventario(ordenPorEntregar);
+                    if (faltantes.length > 0) {
+                        mostrarAvisoFaltaInventarioPersonal(ordenPorEntregar, faltantes);
+                        return;
+                    }
+                }
+
                 const ordenEntregada = pendingOrders.splice(index, 1)[0];
                 ordenEntregada.estado = 'Entregada';
                 orderStatusHistory[orderId] = 'Entregada';
+                await descontarInventarioPorOrdenSiCorresponde(ordenEntregada);
                 deliveredOrders.unshift(ordenEntregada);
                 mostrarAlertaEstadoCliente(ordenEntregada, 'Entregada');
             }
@@ -3837,7 +4170,7 @@
         }
 
         // =========================================================================
-        // SINCRONIZACIÓN CON SUPABASE Y DETECCIÓN DE CAMBIOS PARA NOTIFICAR CLIENTES
+        // SINCRONIZACIÓN CADA 5 SEGUNDOS (ÓRDENES E INVENTARIO EN SUPABASE)
         // =========================================================================
         async function cargarOrdenesDesdeBD() {
             if (!supabaseClient) return;
@@ -3855,6 +4188,10 @@
                 data.forEach(orden => {
                     const prevStatus = orderStatusHistory[orden.id];
 
+                    if (orden.estado !== 'Pendiente') {
+                        deductedOrderIds.add(orden.id);
+                    }
+
                     if (initialLoadComplete) {
                         if (!prevStatus && orden.estado === 'Pendiente' && isStaffAuthorized) {
                             playStatusSound('prep');
@@ -3867,6 +4204,7 @@
                     orderStatusHistory[orden.id] = orden.estado;
                 });
 
+                guardarOrdenesDescontadasLocal();
                 initialLoadComplete = true;
                 pendingOrders = data.filter(o => o.estado !== 'Entregada');
                 deliveredOrders = data.filter(o => o.estado === 'Entregada');
@@ -3880,14 +4218,19 @@
 
         // Inicializar vistas al cargar la página
         renderMenuCatalog();
-        renderInventorySection();
+        renderInventorySection(false);
 
+        // Ciclo automático de actualización cada 5 segundos (5000ms) para órdenes e inventario en BD
         if (supabaseClient) {
             cargarOrdenesDesdeBD();
-            setInterval(() => {
-                cargarOrdenesDesdeBD();
-            }, 4000);
+            cargarInventarioDesdeBD();
         }
+        setInterval(() => {
+            if (supabaseClient) {
+                cargarOrdenesDesdeBD();
+                cargarInventarioDesdeBD();
+            }
+        }, 5000);
     </script>
 </body>
 </html>
